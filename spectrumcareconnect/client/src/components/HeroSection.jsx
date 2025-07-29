@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import heroImage from "../assets/hero.png";
 
 const HeroSection = () => {
   return (
@@ -21,7 +22,7 @@ const HeroSection = () => {
         {/* Right Side: Illustration */}
         <div className="mb-10 lg:mb-0 w-full max-w-md lg:max-w-lg">
           <img
-            src="./src/assets/hero.png"
+            src={heroImage}
             alt="Therapy support illustration"
             className="w-full"
           />
