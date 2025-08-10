@@ -1,6 +1,7 @@
 import React, {useState} from "react"
 import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
+import FeatureCategories from "../components/FeatureCategories";
 
 
 
@@ -16,6 +17,7 @@ function Landingpage (){
                         
                     </div>
                 <HeroSection />
+                <FeatureCategories/>
             </div>
            
         </>
