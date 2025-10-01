@@ -58,7 +58,7 @@ function FeatureCategories(){
     ];
 
     return (
-        <section id="features" className="py-20 bg-muted/30">
+        <section id="features" className="bg-gradient-to-br from-blue-100 via-white to-pink-100  px-4 md:px-8 lg:px-24 py-20 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <Badge variant="secondary" className="mb-4">

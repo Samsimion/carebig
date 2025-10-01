@@ -17,8 +17,10 @@ function Landingpage (){
                         
                     </div>
                 <HeroSection />
-                <FeatureCategories/>
+                
             </div>
+
+            <FeatureCategories/>
            
         </>
     )
