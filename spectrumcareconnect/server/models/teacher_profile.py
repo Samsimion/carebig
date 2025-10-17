@@ -4,7 +4,7 @@ from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, timezone
 
 
-class Teacher_profile(db.Model,SerializerMixin):
+class TeacherProfile(db.Model,SerializerMixin):
     __tablename__='teacher_profiles'
 
     id = db.Column(db.Integer,primary_key=True)
@@ -32,5 +32,6 @@ class Teacher_profile(db.Model,SerializerMixin):
     user_id =db.Column(db.Integer, db.ForeignKey('teacher_profiles.id'), nullable=False, unique=True)
 
     #relationship
-    user= db.relationship('')
+    user= db.relationship('User', back_populates='techer_prof', foreign_keys=[user_id])
+    school_report_share = db.relationship('SchoolReportShare', back_populates='teacher_profile', foreign_keys='SchoolReportShare.teacher_id', cascade='all, delete-orphan')
 

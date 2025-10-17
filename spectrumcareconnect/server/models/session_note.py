@@ -17,7 +17,12 @@ class SessionNote(db.Model, SerializerMixin):
 
 
 
-
+    # relatioms
     session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
     therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
+
+    # relationships
+    session = db.relationship('Session', back_populates='session_notes', foreign_keys=[session_id])
+    therapist_profile = db.relationship('TherapistProfile', back_populates='session_notes', foreign_keys=[therapist_id])
+    child_profile = db.relationship('ChildProfile', back_populates='session_notes', foreign_keys=[child_id] )

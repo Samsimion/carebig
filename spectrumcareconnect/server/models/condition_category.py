@@ -3,7 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, timezone
 
-class Condition_category(db.Model, SerializerMixin):
+class ConditionCategory(db.Model, SerializerMixin):
     __tablename__ = 'condition_categories'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -12,3 +12,9 @@ class Condition_category(db.Model, SerializerMixin):
     created_at= db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
     updated_at= db.Column(db.Datetime, default=datetime.now(timezone.utc))
+
+
+    #relation
+
+    #relationship
+    condition =db.relationship('Condition', back_populates='condition_category', foreign_keys='Condition.category_id')

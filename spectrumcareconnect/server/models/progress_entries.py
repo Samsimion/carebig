@@ -18,7 +18,12 @@ class ProgressEntry(db.Model,SerializerMixin):
 
 
 
-
+    # relations
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False)
-    metric_id = db.Column(db.Integer, db.ForeignKey('progress_metrics.id'))
+    progress_metric_id = db.Column(db.Integer, db.ForeignKey('progress_metrics.id'))
     session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
+    
+    # relationship
+    child_profile = db.relationship('ChildProfile', back_populates='progress_entries', foreign_keys= [child_id])
+    progress_metric =db.relationship('ProgressMetric', back_populates='progress_entries', foreign_keys=[progress_metric_id])
+    session = db.relationship('Session', back_populates='progress_entries', foreogn_keys=[session_id])

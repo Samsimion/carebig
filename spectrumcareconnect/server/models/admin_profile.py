@@ -4,7 +4,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, timezone
 
-class Admin_profile(db.Model, SerializerMixin):
+class AdminProfile(db.Model, SerializerMixin):
     __tablename__= 'admin_profiles'
 
     id =db.Column(db.Integer, primary_key=True)
@@ -25,5 +25,5 @@ class Admin_profile(db.Model, SerializerMixin):
 
     #relationships
 
-    user= db.relationship('User', back_populates='rel_name', foreign_keys=[user_id])
-
+    user= db.relationship('User', back_populates='admin_prof', foreign_keys=[user_id])
+    

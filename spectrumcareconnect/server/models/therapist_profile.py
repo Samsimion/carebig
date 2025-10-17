@@ -4,11 +4,11 @@ from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, timezone
 
 
-class Therapist_profile(db.Model,SerializerMixin):
+class TherapistProfile(db.Model,SerializerMixin):
     __tablename__ = 'therapist_profiles'
 
     id= db.Column(db.Integer , primary_key=True)
-    user_id =db.Column(db.Integer ,db.ForeignKey('users.id') ,nullable=False)
+    
     date_of_birth= db.Column(db.String)
     gender =db.Column(db.Enum('male','female','other','prefer_not_to_say'))
     address_line1=db.Column(db.String(150))
@@ -32,3 +32,14 @@ class Therapist_profile(db.Model,SerializerMixin):
     updated_at =db.Column(db.DateTime ,default=datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean ,default=False)  
     archived_at =db.COlumn(db.DateTime ,default=datetime.now(timezone.utc))
+
+    #relations
+    user_id =db.Column(db.Integer ,db.ForeignKey('users.id') ,nullable=False)
+
+    #relationship
+    user=db.relationship('User', back_populates='therapist_prof', foreign_keys=[user_id])
+    therapist_therapie = db.relationship('TherapistTherapies', back_populates='therapist_profile',foreign_keys='TherapistTherapies.therapist_id',cascade='all, delete-orphan')
+    child_therapist = db.relationship('ChildTherapist', back_populates='therapist_profile', foreign_keys='ChildTherapist.therapist_id',cascade='all, delete-orphan')
+    availability_slots= db.relationship('AvailabilitySlot', back_populates='therapist_profiles', foreign_keys= 'AvailabilitySlot.therapist_id', cascade='all, delete-orphan')
+    sessions = db.relationship('Session', back_populates='therapist_profiles', foreign_keys='Session.therapist_id', cascade='all, delete-orphan')
+    session_notes = db.relationship('SessionNote', back_populates='therapist_profile', foreign_keys='SessionNote.therapist_id', cascade='all, delete-orphan')

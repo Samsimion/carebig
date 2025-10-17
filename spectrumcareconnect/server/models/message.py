@@ -13,7 +13,11 @@ class Message(db.Model, SerializerMixin):
     created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
 
-
-
+    #relations
     sender_id = db.Column(db.Integer , db.ForeignKey('users.id'), nullable=False)
     receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'),nullable=False)
+    
+    #relationships
+    sender_user= db.relationship('User',back_populates='sender_message', foreign_keys=[sender_id])
+    receiver_user = db.relationship('User', back_populates='receiver_message', foreign_keys=[receiver_id])
+    

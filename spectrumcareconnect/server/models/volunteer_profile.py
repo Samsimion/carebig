@@ -5,7 +5,7 @@ from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, timezone
 
 
-class Volunteer_profile(db.Model, SerializerMixin):
+class VolunteerProfile(db.Model, SerializerMixin):
     __tablename__='volunteer_profiles'
 
   
@@ -24,6 +24,8 @@ class Volunteer_profile(db.Model, SerializerMixin):
 
 
     #relationships
+    user=db.relationship('User', back_populates='volunteer_prof', foreign_keys=[user_id])
+    volunteer_assignemnt= db.relationship('VolunteerAssignment', back_populates='volunteer_prof_assign',foreign_keys='VolunteerAssignment.volunteer_id')
 
 
 

@@ -14,6 +14,10 @@ class Consent(db.Model, SerializerMixin):
     expiry_date = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
 
-
+    #relations
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False )
     granted_to_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    
+    #relationship
+    child_profile = db.relationship('ChildProfile', back_populates='consent', foreign_keys=[child_id])
+    user = db.relationship('User', back_populates='consent', foreign_keys=[granted_to_user_id])

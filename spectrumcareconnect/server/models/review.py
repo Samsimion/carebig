@@ -14,6 +14,10 @@ class Review(db.Model, SerializerMixin):
 
 
 
-
+    # relations
     session_id= db.Column(db.Integer, db.ForeignKey('sessions.id'))
     parent_id= db.Column(db.Integer, db.ForeignKey('parent_profiles.id'))
+
+    # relationship
+    session = db.relationship('Session', back_populates='reviews',foreign_keys= [session_id] )
+    parent_profile = db.relationship('ParentProfile', back_populates='reviews', foreign_keys=[parent_id])

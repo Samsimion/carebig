@@ -15,7 +15,11 @@ class AvailabilitySlot(db.Model, SerializerMixin):
     created_at =db.Column(db.Datetime, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
+    # relations
+    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'), nullable=False)
 
 
-
-    therapist_id = db
+    # relationship
+    therapist_profiles = db.relationship('TherapistProfile', back_populates='availaility_slots', foreign_keys=[therapist_id])
+    sessions = db.relationship('Session', back_populates='availability_slots', foreign_keys='Session.availability_slot_id', cascade= 'all, delete-orphan')
+    waitlists = db.relationship('Waitlist', back_populates='availability_slot', foreign_keys='Waitlist.availability_slot_id', cascade='all, delete-orphan')

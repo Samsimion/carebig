@@ -17,8 +17,14 @@ class Payment(db.Model, SerializerMixin):
     updated_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
 
-
+    # relations
     session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
     parent_id = db.Column(db.Integer, db.ForeignKey('parent_profiles.id'))
-    donor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    donor_id = db.Column(db.Integer, db.ForeignKey('donor_profiles.id'))
     organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'))
+
+    # relationships
+    session = db.relationship('Session', back_populates='payment', foreign_keys=[session_id] )
+    parent_profile = db.relationship('ParentProfile', back_populates='payment', foreign_keys=[parent_id])
+    donor = db.relationship('DonorProfile', back_populates='payments', foreign_keys=[donor_id])
+    organization = db.relationship('Organization', back_populates='payment', foreign_keys=[organization_id])

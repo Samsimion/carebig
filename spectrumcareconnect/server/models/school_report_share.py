@@ -9,7 +9,10 @@ class SchoolReportShare(db.Model, SerializerMixin):
     id =db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
-    report_id = db.Column(db.Integer, db.ForeignKey('medical_reports.id'))
+    # relations
+    medical_report_id = db.Column(db.Integer, db.ForeignKey('medical_reports.id'))
     teacher_id = db.Column(db.Integer, db.ForeignKey('teacher_profiles.id'))
 
-
+    # relationships
+    medical_report = db.relationship('MedicalReport', back_populates='school_report_share', foreign_keys=[medical_report_id])
+    teacher_profile = db.relationship('TeacherProfile', back_populates='school_report_share', foreign_keys=[teacher_id])

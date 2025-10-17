@@ -4,7 +4,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime, timezone
 
 
-class Parent_child_links(db.Model, SerializerMixin):
+class ParentChildLink(db.Model, SerializerMixin):
     __tablename__ = 'parent_child_links'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -12,6 +12,10 @@ class Parent_child_links(db.Model, SerializerMixin):
     created_at = db.Column(db.Datetime, default= datetime.now(timezone.utc))
 
 
-
+    #relations
     parent_id = db.Column(db.Integer, db.ForeignKey('parent_profiles.id'), nullable=False)
     child_id= db.Column(db.Integer, db.ForeignKey('child_profiles.id') ,nullable=False)
+    
+    #relationships
+    child_profiles = db.relationship('ChildProfile', back_populates='parent_child_links', foreign_keys=[child_id])
+    parent_profiles = db.relationship('ParentProfile', back_populates='parent_child_links',foreign_keys=[parent_id])

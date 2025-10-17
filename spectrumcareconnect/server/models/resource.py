@@ -14,4 +14,9 @@ class Resource(db.Model, SerializerMixin):
     is_public = db.Column(db.Boolean, default=False)
     language_code = db.Column(db.String)
     created_at= db.Column(db.Datetime, default=datetime.now(timezone.utc))
+
+    # relations
     uploaded_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    # relationships
+    uploaded_by_user = db.relationship('User', back_populates='resources', foreign_keys=[uploaded_by_user_id])

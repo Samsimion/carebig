@@ -3,7 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, timezone
 
-class Parent_profile(db.Model, SerializerMixin):
+class ParentProfile(db.Model, SerializerMixin):
     __tablename__= 'parent_profiles'
 
     id= db.Column(db.Integer, primary_key=True, nullable=False)
@@ -30,7 +30,9 @@ class Parent_profile(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'),nullable=False , unique=True)
 
     #relationships
-
-    user= db.relationship('User', back_populates= 'parent_prof')
-
-
+    
+    user= db.relationship('User', back_populates= 'parent_prof', foreign_keys=[user_id])
+    parent_child_links = db.relationship('ParentChildLink', back_populates='parent_profiles', foreign_keys='ParentChildLink.parent_id', cascade='all, delete-orphan')
+    reviews = db.relationship('Review', back_populates='parent_profile', foreign_keys='Review.parent_id', cascade='all, delete-orphan')
+    payment = db.relationship('Payment', back_populates='parent_profile', foreign_keys='Payment.parent_id', cascade='all, delete-orphan')
+    waitlists = db.relationship('Waitlist', back_populates='parent_profile', foreign_keys='Waitlist.parent_id', cascade='all,  delete-orphan')

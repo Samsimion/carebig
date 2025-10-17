@@ -17,7 +17,14 @@ class Goal(db.Model, SerializerMixin):
     created_at =db.Column(db.Datetime , default=datetime.now(timezone.utc))
 
 
-
+    # relations
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    metric_id = db.Column(db.Integer, db.ForeignKey('progress_metrics.id'))
+    progress_metric_id = db.Column(db.Integer, db.ForeignKey('progress_metrics.id'))
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+
+    # relationships
+    child_profile = db.relationship('ChildProfile', back_populates='goals', foreign_keys=[child_id])
+    progress_metric = db.relationship('ProgressMetric', back_populates='goals', foreign_keys=[progress_metric_id])
+    created_by_user = db.relationship('User', back_populates='goals', foreign_keys=[created_by_user_id])
+    achievements = db.relationship('Achievement', back_populates='goal', foreign_keys='Achievement.goal_id', cascade='all, delete-orphan')

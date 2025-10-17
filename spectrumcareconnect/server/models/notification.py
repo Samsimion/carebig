@@ -16,5 +16,8 @@ class Notification(db.Model, SerializerMixin):
     related_entity_id =db.Column(db.Integer, db.ForeignKey())
 
 
-
+     # relations
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    #relationship
+    user = db.relationship('User', back_populates='notifications', foreign_keys=[user_id] )

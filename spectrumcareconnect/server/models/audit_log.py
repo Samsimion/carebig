@@ -17,6 +17,11 @@ class AuditLog(db.Model, SerializerMixin):
     created_at =db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
 
-
+    # relations
     user_id =db.Column(db.Integer, db.ForeignKey('users.id'))
-    entity_id = db.Column(db.Integer,db.ForeignKey('') )
+    entity_id = db.Column(db.Integer,db.ForeignKey('users.id') )
+
+    # relationships
+    user = db.relationship('User',back_populates='audit_log_user', foreign_keys=[user_id] )
+    entity_user = db.relationship('User', back_populates='audit_log_entity', foreign_keys=[entity_id])
+

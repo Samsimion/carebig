@@ -3,7 +3,7 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import  hybrid_property
 from datetime import datetime, timezone
 
-class Sessions(db.Model, SerializerMixin):
+class Session(db.Model, SerializerMixin):
     __tablename__ ='sessions'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -14,10 +14,23 @@ class Sessions(db.Model, SerializerMixin):
     updated_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
 
-
+    # relations
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'),nullable=False)
     therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
     therapy_type_id = db.Column(db.Integer, db.ForeignKey('therapy_types.id'))
     condition_id = db.Column(db.Integer, db.ForeignKey('conditions.id'))
     availability_slot_id = db.Column(db.Integer, db.ForeignKey('availability_slots.id'))
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
+    # relationship
+    child_profiles= db.relationship('ChildProfile', back_populates='sessions', foreign_keys=[child_id])
+    therapist_profiles = db.relationship('TherapistProfile' ,back_populates='sessions', foreign_keys=[therapist_id])
+    therapy_type = db.relationship('TherapyType', back_populates='session', foreign_keys=[therapy_type_id])
+    conditions = db.relationship('Condition', back_populates='session', foreign_keys=[condition_id])
+    availability_slots= db.relationship('AvailabilitySlot', back_populates='sessions', foreign_keys=[availability_slot_id])
+    created_user = db.relationship('User', back_populates='sessions', foreign_keys=[created_by_user_id])
+    reviews = db.relationship('Review', back_populates='session', foreign_keys='Review.session_id', cascade='all, delete-orphan')
+    progress_entries = db.relationship('ProgressEntry', back_populates='session',foreign_keys='ProgressEntry.session_id', cascade='all, delete-orphan')
+    session_notes = db.relationship('Session', back_populates='session', foreign_keys='SessionNote.session_id', cascade='all, delete-orphan')
+    payment = db.relationship('Payment', back_populates='session', foreign_keys='Payment.session_id', cascade='all, delete-orphan')
+    

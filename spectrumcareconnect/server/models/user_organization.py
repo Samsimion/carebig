@@ -10,12 +10,10 @@ class UserOrganization(db.Model, SerializerMixin):
     role= db.Column(db.Enum('member','staff','admin'))
     created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
-    user_id = db.Column(db.Integer,db.ForeignKey('users.id'))
-    organization_id =db.Column(db.Integer, db.ForeignKey('organizations.id'))
 
-
-
-
+    # relations
     user_id= db.Column(db.Integer, db.ForeignKey('users.id'))
     organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'))
-   
+    
+    # relationship
+    

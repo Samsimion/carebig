@@ -14,6 +14,11 @@ class Appointment(db.Model, SerializerMixin):
     notes =db.Column(db.Text)
     created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))    
 
-
+    #relations
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) #doctor/therapist/teacher
+    
+    #relationship
+    child_profiles = db.relationship('ChildProfile', back_populates='appointments', foreign_keys=[child_id])
+    users = db.relationship('User', back_populates='appointments', foreign_keys=[user_id])
+    

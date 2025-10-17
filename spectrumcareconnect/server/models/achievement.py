@@ -15,5 +15,10 @@ class Achievement( db.Model, SerializerMixin):
     created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
 
+    # relation
     child_id =db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
     goal_id = db.Column(db.Integer, db.ForeignKey('goals.id'))
+
+    # relationships
+    child_profile = db.relationship('ChildProfile', back_populates='achievements', foreign_keys=[child_id])
+    goal = db.relationship('Goal', back_populates='achievements', foreign_keys=[goal_id])

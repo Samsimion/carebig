@@ -20,6 +20,11 @@ class MedicalReport(db.Model, SerializerMixin):
 
 
 
-
+    # relations
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
     uploaded_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    # relationships
+    child_profile = db.relationship('ChildProfile', back_populates='medical_reports', foreign_keys=[child_id])
+    uploaded_by_user = db.relationship('User', back_populates='medical_reports', foreign_keys=[uploaded_by_user_id])
+    school_report_share = db.relationship('SchoolReportShare', back_populates='medical_report', foreign_keys='SchoolReportShare.medical_report_id', cascade='all, delete-orphan')
