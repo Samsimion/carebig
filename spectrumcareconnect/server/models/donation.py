@@ -13,6 +13,17 @@ class Donation(db.Model, SerializerMixin):
     purpose = db.Column(db.Enum('general','child_support','therapy_fund','infrastructure','other'))
 
     created_at = db.Column(db.Datetime, datetime.now(timezone.utc))
-
-    donor_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
+    # relations
+    donor_id = db.Column(db.Integer, db.ForeignKey('donor_profiles.id'))
     organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'))
+    
+
+    # relationship
+    donors = db.relationship('DonorProfile', back_populates='donations', foreign_keys=[donor_id])
+    organizations = db.relationship('Organization', back_populates='donations', foreign_keys=[organization_id])
+    
+    serialize_rules = ('-donors.donations','-organizations.donations',)
+
+    def __repr__(self):
+        return f"<Donation id={self.id} amount_cents={self.amount_cents} currency_code={self.currency_code} status={self.status} purpose={self.purpose} donors_id={self.donor_id} organization_id={self.organization_id}>"

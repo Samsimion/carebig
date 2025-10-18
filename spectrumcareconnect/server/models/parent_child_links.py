@@ -19,3 +19,8 @@ class ParentChildLink(db.Model, SerializerMixin):
     #relationships
     child_profiles = db.relationship('ChildProfile', back_populates='parent_child_links', foreign_keys=[child_id])
     parent_profiles = db.relationship('ParentProfile', back_populates='parent_child_links',foreign_keys=[parent_id])
+
+    serialize_rules=('-child_profiles.parent_child_links','-parent_profiles.parent_child_links')
+
+    def __repr__(self):
+        return f"<ParentChildLink id={self.id} parent_relationship={self.parent_relationship} created_at={self.created_at} parent_id={self.parent_id} child_id={self.child_id}>"

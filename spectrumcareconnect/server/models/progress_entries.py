@@ -27,3 +27,9 @@ class ProgressEntry(db.Model,SerializerMixin):
     child_profile = db.relationship('ChildProfile', back_populates='progress_entries', foreign_keys= [child_id])
     progress_metric =db.relationship('ProgressMetric', back_populates='progress_entries', foreign_keys=[progress_metric_id])
     session = db.relationship('Session', back_populates='progress_entries', foreogn_keys=[session_id])
+
+    serialize_rules=('-child_profile.progress_entries','-progress_metric.progress_entries','-session.progress_entries',)
+
+
+    def __repr__(self):
+        return f"<ProgressEntry id={self.id} value={self.value} notes={self.notes} recorded_by_user_id={self.recorded_by_user_id} recorded_at={self.recorded_at} created_at={self.created_at} child_id={self.child_id} progress_metric_id={self.progress_metric_id} session_id={self.session_id}>"

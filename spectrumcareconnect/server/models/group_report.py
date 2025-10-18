@@ -10,8 +10,19 @@ class GroupReport(db.Model, SerializerMixin):
     status = db.Column(db.String)
     created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
 
+    # relations
+    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
+    reported_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    group_post_id = db.Column(db.Integer, db.ForeignKey('group_posts.id'))
+    group_comment_id = db.Column(db.Integer, db.ForeignKey('group_comments.id'))
 
-    group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
-    reported_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post_id = db.Column(db.Integer, db.ForeignKey('group_posts.id'))
-    comment_id = db.Column(db.Integer, db.ForeignKey('group_comments.id'))
+    # relationships
+    support_group = db.relationship('SupportGroup', back_populates='group_report', foreign_keys=[support_group_id])
+    reported_by_user = db.relationship('User', back_populates='group_report', foreign_keys=[reported_by_user_id])
+    group_post = db.relationship('GroupPost', back_populates='group_report', foreign_keys=[group_post_id])
+    group_comment = db.relationship('GroupComment', back_populates='group_report', foreign_keys=[group_comment_id])
+
+    serialize_rules = ('-support_group.group_report','-reported_by_user.group_report','-group_post.group_report','-group_comment.group_report')
+
+    def __repr__(self):
+        return f"<GroupReport id={self.id} reason='{self.reason}' status='{self.status}' created_at={self.created_at} support_group_id={self.support_group_id} reported_by_user_id={self.reported_by_user_id} group_post_id={self.group_post_id} group_comment_id={self.group_comment_id}>"

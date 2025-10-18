@@ -36,3 +36,8 @@ class ParentProfile(db.Model, SerializerMixin):
     reviews = db.relationship('Review', back_populates='parent_profile', foreign_keys='Review.parent_id', cascade='all, delete-orphan')
     payment = db.relationship('Payment', back_populates='parent_profile', foreign_keys='Payment.parent_id', cascade='all, delete-orphan')
     waitlists = db.relationship('Waitlist', back_populates='parent_profile', foreign_keys='Waitlist.parent_id', cascade='all,  delete-orphan')
+
+    serialize_rules = ('-user.parent_prof', '-parent_child_links.parent_profiles','-reviews.parent_profile','-payment.parent_profile','-waitlists.parent_profile')
+
+    def __repr__(self):
+        return f"<ParentProfile id={self.id} date_of_birth={self.date_of_birth} gender={self.gender} address_line={self.address_line} address_line2={self.address_line2} city={self.city} state_province={self.state_province} postal_code={self.postal_code} country={self.country} preferred_language={self.preferred_language} emergency_contact_phone={self.emergency_contact_phone} occupation={self.occupation} household_notes={self.household_notes} created_at={self.created_at} updated_at={self.updated_at} is_deleted={self.is_deleted} archived_at={self.archived_at} user_id={self.user_id}>"

@@ -15,7 +15,7 @@ class VolunteerProfile(db.Model, SerializerMixin):
     created_at =db.Column(db.DateTime, default= datetime.now(timezone.utc))
     updated_at =db.Column(db.DateTime, default= datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean, default=False)
-    archived_at= db.Column(db.DateTime, default= datetime.now(timezone.utc))
+    achived_at= db.Column(db.DateTime, default= datetime.now(timezone.utc))
 
 
 
@@ -27,7 +27,7 @@ class VolunteerProfile(db.Model, SerializerMixin):
     user=db.relationship('User', back_populates='volunteer_prof', foreign_keys=[user_id])
     volunteer_assignemnt= db.relationship('VolunteerAssignment', back_populates='volunteer_prof_assign',foreign_keys='VolunteerAssignment.volunteer_id')
 
+    serialize_rules=('user.volunteer_prof','volunteer_assignemnt.volunteer_prof_assign',)
 
-
-
-
+    def __repr__(self):
+        return f"<VolunteerProfile id={self.id} skills='{self.skills}' availability='{self.availability}' created_at={self.created_at} updated_at={self.updated_at} is_deleted={self.is_deleted} achived_at={self.achived_at} user_id={self.user_id}>"

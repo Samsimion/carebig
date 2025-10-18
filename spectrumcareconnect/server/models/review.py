@@ -21,3 +21,9 @@ class Review(db.Model, SerializerMixin):
     # relationship
     session = db.relationship('Session', back_populates='reviews',foreign_keys= [session_id] )
     parent_profile = db.relationship('ParentProfile', back_populates='reviews', foreign_keys=[parent_id])
+
+    serialize_rules =('-session.reviews','-parent_profile.reviews')
+
+    def __repr__(self):
+        return f"<Review id={self.id} rating={self.rating} comment={self.comment} created_at={self.created_at} session_id={self.session_id} parent_id={self.parent_id}>"
+

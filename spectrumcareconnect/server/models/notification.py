@@ -21,3 +21,8 @@ class Notification(db.Model, SerializerMixin):
 
     #relationship
     user = db.relationship('User', back_populates='notifications', foreign_keys=[user_id] )
+
+    serialize_rules = ('-user.notifications')
+
+    def __repr__(self):
+        return f"<Notification id={self.id} type={self.type} message={self.message} is_read={self.is_read} related_entity_type={self.related_entity_type} created_at={self.created_at} related_entity_id={self.related_entity_id} user_id={self.user_id} >"

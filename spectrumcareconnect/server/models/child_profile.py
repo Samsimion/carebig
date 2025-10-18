@@ -44,3 +44,12 @@ class ChildProfile(db.Model, SerializerMixin):
     medical_reports = db.relationship('MedicalReport', back_populates='child_profile', foreign_keys= 'ChildProfile.child_id', cascade='all, delete-orphan')
     medical_history = db.relationship('MedicalHistory', back_populates='child_profile', foreign_keys='MedicalHistory.child_id', cascade='all, delete-orphan')
     waitists = db.relationship('Waitlist', back_populates='child_profile', foreign_keys='Waitlist.child_id', cascade='all, delete-orphan')
+    incident_report = db.relationship('IncidentReport', back_populates='child_profile', foreign_keys='IncidentReport.child_id', cascade='all, delete-orphan')
+    media_storage = db.relationship('MediaStorage', back_populates='child_profile', foreign_keys='MediaStorage.child_id', cascade='all, delete-orphan')
+    AIanalysis =  db.relationship('AiAnalysis', back_populates='child_profile', foreign_keys='AiAnalysis.child_id', cascade='all, delete-orphan')
+    careteam = db.relationship('CareTeam', back_populates='child_profile', foreign_keys='CareTeam.child_id', cascade='all, delete-orphan')
+
+    serialze_rules =('-Volunteer_Assignment.child_volunteer_assign', '-condition.child_profile','-organization.child_profile','-child_therapist.child_profiles','-appointments.child_profiles','-parent_child_links.child_profiles','-consent.child_profile','-sessions.child_profiles','-progress_entries.child_profile','-goals.child_profile','-achievements.child_profile','-medical_reports.child_profile','-medical_history.child_profile','-waitists.child_profile','-incident_report.child_profile','-media_storage.child_profile','-AIanalysis.child_profile','-careteam.child_profile',)
+
+    def __repr__(self):
+        return f"<ChildProfile id={self.id} full_name='{self.full_name}' date_of_birth={self.date_of_birth} gender={self.gender} profile_photo_url='{self.profile_photo_url}' diagnosis_notes='{self.diagnosis_notes}' support_level={self.support_level} education_setting={self.education_setting} communication_mode={self.communication_mode} allergies='{self.allergies}' interests='{self.interests}' medical_notes='{self.medical_notes}' primary_diagnosis_id={self.primary_diagnosis_id} organization_id={self.organization_id} >"

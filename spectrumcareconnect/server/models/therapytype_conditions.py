@@ -21,3 +21,8 @@ class TherapytypeCondition(db.Model, SerializerMixin):
     #relationship
     therapy_type = db.relationship('TherapyType', back_populates='therapytype_condition', foreign_keys=[therapy_type_id])
     condition = db.relationship('Condition', back_populates='therapytype_condition', foreign_keys=[condition_id])
+
+    serialize_rules = ('therapy_type.therapytype_condition','condition.therapytype_condition',)
+
+    def __repr__(self):
+        return f"<TherapytypeCondition id={self.id} effectiveness_level={self.effectiveness_level} notes='{self.notes}' created_at={self.created_at} therapy_type_id={self.therapy_type_id} condition_id={self.condition_id}>"

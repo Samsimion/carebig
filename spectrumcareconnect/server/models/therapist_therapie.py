@@ -22,7 +22,7 @@ class TherapistTherapies(db.Model, SerializerMixin):
     therapist_profile = db.relationship('TherapistProfile', back_populates='therapist_therapie', foreign_keys=[therapist_id])
     therapy_type = db.relationship('TherapyType', back_populates='therapist_therapie', foreign_keys=[therapy_type_id])
 
+    serialize_rules =('therapist_profile.therapist_therapie','therapy_type.therapist_therapie',)
 
-
-
-    
+    def __repr__(self):
+        return f"<TherapistTherapies id={self.id} qualification_notes='{self.qualification_notes}' experience_years={self.experience_years} is_primary_speciality={self.is_primary_speciality} created_at={self.created_at} therapist_id={self.therapist_id} therapy_type_id={self.therapy_type_id}>"

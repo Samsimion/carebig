@@ -18,3 +18,6 @@ class ConditionCategory(db.Model, SerializerMixin):
 
     #relationship
     condition =db.relationship('Condition', back_populates='condition_category', foreign_keys='Condition.category_id')
+
+    def __repr__(self):
+        return f"<ConditionCategory id={self.id} name='{self.name}' desription='{self.desription}'>"

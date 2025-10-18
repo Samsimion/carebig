@@ -21,3 +21,7 @@ class Waitlist(db.Model, SerializerMixin):
     parent_profile= db.relationship('ParentProfile', back_populates='waitlists', foreign_keys=[parent_id])
     child_profile = db.relationship('ChildProfile', back_populates='waitlists', foreign_keys=[child_id])
     
+    serialize_rules=('-availability_slot.waitlists','-parent_profile.waitlists','-child_profile.waitlists',)
+
+    def __repr__(self):
+        return f"<Waitlist id={self.id} status={self.status} created_at={self.created_at} availability_slot_id={self.availability_slot_id} parent_id={self.parent_id} child_id={self.child_id}>"

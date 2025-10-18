@@ -21,3 +21,7 @@ class Message(db.Model, SerializerMixin):
     sender_user= db.relationship('User',back_populates='sender_message', foreign_keys=[sender_id])
     receiver_user = db.relationship('User', back_populates='receiver_message', foreign_keys=[receiver_id])
     
+    serialize_rules = ('-sender_user.sender_message','-receiver_user.receiver_message',)
+
+    def __repr__(self):
+        return f"<Message id={self.id} content={self.content} is_read={self.is_read} created_at={self.created_at} sender_id={self.sender_id} receiver_id={self.receiver_id}>"

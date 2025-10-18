@@ -22,3 +22,8 @@ class Appointment(db.Model, SerializerMixin):
     child_profiles = db.relationship('ChildProfile', back_populates='appointments', foreign_keys=[child_id])
     users = db.relationship('User', back_populates='appointments', foreign_keys=[user_id])
     
+    serialize_rules = ('-child_profiles.appointments', 'users,appointments',)
+
+
+    def __repr__(self):
+        return f"<Appointment id={self.id} type={self.type}  scheduled_at={self.scheduled_at} status={self.status} notes='{self.notes}' child_id={self.child_id} user_id={self.user_id}>"

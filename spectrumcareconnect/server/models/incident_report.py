@@ -15,6 +15,15 @@ class IncidentReport(db.Model, SerializerMixin):
     
     
 
-
+    # relations
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    reported_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    reported_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    
+    # relationship
+    child_profile = db.relationship('ChildProfile',back_populates='incident_report', foreign_keys=[child_id])
+    reported_by = db.relationship('User', back_populates='incident_report', foreign_keys=[reported_by_user_id])
+
+    serialize_rules =('-child_profile.incident_report','reported_by.incident_report',)
+
+    def __repr__(self):
+        return f"<IncidentReport id={self.id} description='{self.description}' severity={self.severity} status={self.status} created_at={self.created_at} updated_at={self.updated_at} child_id={self.child_id} reported_by_user_id={self.reported_by_user_id}>"

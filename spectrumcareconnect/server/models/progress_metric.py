@@ -24,3 +24,9 @@ class ProgressMetric(db.Model, SerializerMixin):
     progress_entries = db.relationship('ProgressEntry', back_populates='progress_metric', foreign_keys='ProgressEntry.progress_metric_id', cascade='all, delete-orphan')
     goals = db.relationship('Goal', back_populates='progress_metric', foreign_keys='Goal.progress_metric_id',cascade='all, delete-orphan' )
     
+
+    serialize_rules=('-therapy_type.progress_metrics','condition.progress_metrics','-progress_entries.progress_metric','goals.progress_metric',)
+
+    def __repr__(self):
+        return f"<ProgressMetric id={self.id} name={self.name} description={self.description} measurement_unit={self.measurement_unit} is_active={self.is_active} created_at={self.created_at} therapy_type_id={self.therapy_type_id} condition_id={self.condition_id}>"
+    

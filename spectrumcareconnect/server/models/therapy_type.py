@@ -24,4 +24,9 @@ class TherapyType(db.Model, SerializerMixin):
     therapist_therapie  = db.relationship('TherapistTherapies', back_populates='therapy_type', foreign_keys='TherapistTherapies.therapy_type_id',cascade='all, delete-orphan')
     therapytype_condition = db.relationship('TherapytypeCondition', back_populates='therapy_type', foreign_keys='therapytype_conditions.therapy_type_id',cascade='all, delete-orphan')
     session = db.relationship('Session', back_populates='therapy_type', foreign_keys='Session.therapy_type_id', cascade='all, delete-orphan')
-    progress_metrics = db.relationship('ProgressMetric', back_populates='therapy_type', foreign_keys='ProgressMetric.therapy_type_id')
+    progress_metrics = db.relationship('ProgressMetric', back_populates='therapy_type', foreign_keys='ProgressMetric.therapy_type_id', cascade='all, delete-orphan')
+    
+    serialize_rules =('-therapy_category.therapy_type', '-therapist_therapie.therapy_type', '-therapytype_condition.therapy_type', '-session.therapy_type', '-progress_metrics.therapy_type',)
+
+    def __repr__(self):
+        return f"<TherapyType id={self.id} name='{self.name}' description='{self.description}' session_length_min={self.session_length_min} recomendation_frequency='{self.recomendation_frequency}' delivery_modes='{self.delivery_modes}' is_active={self.is_active} created_at={self.created_at} updated_at={self.updated_at} category_id={self.category_id}>"

@@ -28,3 +28,8 @@ class Payment(db.Model, SerializerMixin):
     parent_profile = db.relationship('ParentProfile', back_populates='payment', foreign_keys=[parent_id])
     donor = db.relationship('DonorProfile', back_populates='payments', foreign_keys=[donor_id])
     organization = db.relationship('Organization', back_populates='payment', foreign_keys=[organization_id])
+    
+    serialize_rules = ('-session.payment','-parent_profile.payment','-donor.payments','-organization.payment')
+
+    def __repr__(self):
+        return f"<Payment id={self.id} amount_cents={self.amount_cents} currency_code={self.currency_code} status={self.status} expiry_date={self.expiry_date} Payment_method={self.Payment_method} transaction_reference={self.transaction_reference} created_at={self.created_at} updated_at={self.updated_at} session_id={self.session_id} parent_id={self.parent_id} donor_id={self.donor_id} organization_id={self.organization_id} >"

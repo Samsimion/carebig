@@ -16,4 +16,10 @@ class UserOrganization(db.Model, SerializerMixin):
     organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'))
     
     # relationship
-    
+    users = db.relationship('User', back_populates='user_organization', foreign_keys=[user_id])
+    organizations = db.relationship('Organization', back_populates='user_organizations', foreign_keys=[organization_id])
+
+    serialize_rules=('-users.user_organization','-organizations.user_organizations',)
+
+    def __repr__(self):
+        return f"<UserOrganization id={self.id} role={self.role} created_at={self.created_at} user_id={self.user_id} organization_id={self.organization_id}>"

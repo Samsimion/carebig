@@ -8,7 +8,7 @@ class Session(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     is_deleted = db.Column(db.Boolean, default=False)
-    archieved_at = db.Column(db.Datetime, default =datetime.now(timezone.utc))
+    achieved_at = db.Column(db.Datetime, default =datetime.now(timezone.utc))
     price_cents = db.Column(db.Integer)
     created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
@@ -33,4 +33,12 @@ class Session(db.Model, SerializerMixin):
     progress_entries = db.relationship('ProgressEntry', back_populates='session',foreign_keys='ProgressEntry.session_id', cascade='all, delete-orphan')
     session_notes = db.relationship('Session', back_populates='session', foreign_keys='SessionNote.session_id', cascade='all, delete-orphan')
     payment = db.relationship('Payment', back_populates='session', foreign_keys='Payment.session_id', cascade='all, delete-orphan')
-    
+    session_feedback = db.relationship('SessionFeedback', back_populates='session', foreign_keys='SessionFeedback.session_id', cascade='all, delete-orphan')
+    supervision_session = db.relationship('SupervisionSession', back_populates='sessions', foreign_keys='SupervisionSession.session_id', cascade='all, delete-orphan')
+    media_storage = db.relationship('MediaStorage', back_populates='session', foreign_keys='MediaStorage.session_id', cascade='all, delete-orphan')
+    AIanalysis = db.relationship('AiAnalysis', back_populates='session', foreign_keys='AiAnalysis.session_id', cascade='all, delete-orphan')
+
+    serialize_rules= ('-child_profiles.sessions','-therapist_profiles.sessions','-therapy_type.session','-conditions.session','-availability_slots.sessions', '-created_user.sessions', '-reviews.session', '-progress_entries.session', '-session_notes.session', '-payment.session', '-session_feedback.session', '-supervision_session.sessions', '-media_storage.session', '-AIanalysis.session',)
+
+    def __repr__(self):
+        return f"<Session id={self.id} is_deleted={self.is_deleted} achieved_at={self.achieved_at} price_cents={self.price_cents} created_at={self.created_at} updated_at={self.updated_at} child_id={self.child_id} therapist_id={self.therapist_id} therapy_type_id={self.therapy_type_id} condition_id={self.condition_id} availability_slot_id={self.availability_slot_id} created_by_user_id={self.created_by_user_id}>"

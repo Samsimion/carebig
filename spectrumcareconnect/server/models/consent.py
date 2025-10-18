@@ -21,3 +21,9 @@ class Consent(db.Model, SerializerMixin):
     #relationship
     child_profile = db.relationship('ChildProfile', back_populates='consent', foreign_keys=[child_id])
     user = db.relationship('User', back_populates='consent', foreign_keys=[granted_to_user_id])
+    
+    serialize_rules = ('-child_profile.consent','-user.consent',)
+
+    def __repr__(self):
+        return f"<Consent id={self.id} scope={self.scope} status={self.status} child_id={self.child_id} granted_to_user_id={self.granted_to_user_id}>"
+    

@@ -20,3 +20,9 @@ class Resource(db.Model, SerializerMixin):
 
     # relationships
     uploaded_by_user = db.relationship('User', back_populates='resources', foreign_keys=[uploaded_by_user_id])
+
+    serialize_rules = ('-uploaded_by_user.resources')
+
+    def __repr__(self):
+        return f"<Resource id={self.id} title='{self.title}' description='{self.description}' file_url='{self.file_url}' category={self.category} is_public={self.is_public} language_code='{self.language_code}' created_at={self.created_at} uploaded_by_user_id={self.uploaded_by_user_id}>"
+        

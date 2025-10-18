@@ -23,3 +23,8 @@ class AvailabilitySlot(db.Model, SerializerMixin):
     therapist_profiles = db.relationship('TherapistProfile', back_populates='availaility_slots', foreign_keys=[therapist_id])
     sessions = db.relationship('Session', back_populates='availability_slots', foreign_keys='Session.availability_slot_id', cascade= 'all, delete-orphan')
     waitlists = db.relationship('Waitlist', back_populates='availability_slot', foreign_keys='Waitlist.availability_slot_id', cascade='all, delete-orphan')
+
+    serialize_rules = ('-therapist_profiles.availaility_slots', '-sessions.availability_slots','-waitlists.availability_slot',)
+
+    def __repr__(self):
+        return f"<AvailabilitySlot id={self.id} start_time={self.start_time} end_time={self.end_time} status={self.status} location_type={self.location_type} meeting_link='{self.meeting_link}' therapist_id={self.therapist_id}>"

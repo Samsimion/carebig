@@ -26,3 +26,9 @@ class DonorProfile(db.Model,SerializerMixin):
     # relationship
     users = db.relationship('User', back_populates='donor_profile', foreign_keys=[user_id])
     payments = db.relationship('Payment',back_populates='donor', foreign_keys='Payment.donor_id', cascade='all, delete-orphan' )
+    donations = db.relationship('Donation', back_populates='donors', foreign_keys='Donation.donor_id', cascade='all, delete-orphan')
+    
+    serialize_rules = ('-users.donor_profile','-payments.donor','-donations.donors',)
+
+    def __rep__(self):
+        return f"<DonorProfile id={self.id} organization_name={self.organization_name} donation_focus_area='{self.donation_focus_area}' total_donations={self.total_donations} donations_count={self.donations_count} bio='{self.bio}' joined_at={self.joined_at} updated_at={self.updated_at} user_id={self.user_id}>"

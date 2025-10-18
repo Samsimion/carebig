@@ -25,3 +25,7 @@ class AuditLog(db.Model, SerializerMixin):
     user = db.relationship('User',back_populates='audit_log_user', foreign_keys=[user_id] )
     entity_user = db.relationship('User', back_populates='audit_log_entity', foreign_keys=[entity_id])
 
+    serialize_rules = ('-user.audit_log_user', '-entity_user.audit_log_entity',)
+
+    def __repr__(self):
+        return f"<AuditLog id={self.id} action='{self.action}' entity_type='{self.entity_type}' old_values='{self.old_values}' new_values='{self.new_values}' ip_address='{self.ip_address}' device_info='{self.device_info}' >"

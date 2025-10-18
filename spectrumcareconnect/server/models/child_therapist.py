@@ -21,3 +21,8 @@ class ChildTherapist(db.Model, SerializerMixin):
     #relationship
     child_profiles = db.relationship('ChildProfile', back_populates='child_therapist', foreign_keys=[child_id])
     therapist_profile = db.relationship('TherapistProfile',back_populates='child_therapist', foreign_keys=[therapist_id])
+
+    serializer_rules = ('-child_profiles.child_therapist', '-therapist_profile.child_therapist',)
+
+    def __repr__(self):
+        return f"<ChildTherapist id={self.id} relationship_type={self.relationship_type} start_date={self.start_date} end_date={self.end_date} child_id={self.child_id} therapist_id={self.therapist_id}>"

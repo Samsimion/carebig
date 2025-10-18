@@ -17,3 +17,8 @@ class TherapyCategory(db.Model, SerializerMixin):
 
     #relationships
     therapy_type = db.relationship('TherapyType', back_populates='therapy_category', foreign_keys='TherapyType.category_id', cascade='all, delete-orpham')
+
+    serialize_rules =('-therapy_type.therapy_category',)
+
+    def __repr__(self):
+        return f"<TherapyCategory id={self.id} name='{self.name}' description='{self.description}' created_at={self.created_at} updated_at={self.updated_at}>"

@@ -27,3 +27,7 @@ class AdminProfile(db.Model, SerializerMixin):
 
     user= db.relationship('User', back_populates='admin_prof', foreign_keys=[user_id])
     
+    serialize_rules = ('-user.admin_prof',)
+
+    def __repr__(self):
+        return f"<AdminProfile id={self.id} job_title='{self.job_title}' department='{self.department}' permissions_level='{self.permissions_level}' notes='{self.notes}' user_id='{self.user_id}' >"

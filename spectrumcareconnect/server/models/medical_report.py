@@ -28,3 +28,8 @@ class MedicalReport(db.Model, SerializerMixin):
     child_profile = db.relationship('ChildProfile', back_populates='medical_reports', foreign_keys=[child_id])
     uploaded_by_user = db.relationship('User', back_populates='medical_reports', foreign_keys=[uploaded_by_user_id])
     school_report_share = db.relationship('SchoolReportShare', back_populates='medical_report', foreign_keys='SchoolReportShare.medical_report_id', cascade='all, delete-orphan')
+
+    serialize_rules = ('-child_profile.medical_reports','-uploaded_by_user.medical_reports','school_report_share.medical_report',)
+
+    def __repr__(self):
+        return f"<MedicalReport id={self.id} report_type={self.report_type} title={self.title} description={self.description} file_url={self.file_url} file_hash={self.file_hash} is_sensitive={self.is_sensitive} created_at={self.created_at} updated_at={self.updated_at} is_deleted={self.is_deleted} archived_at={self.archived_at} child_id={self.child_id} uploaded_by_user_id={self.uploaded_by_user_id}>"
