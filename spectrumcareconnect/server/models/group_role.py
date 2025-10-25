@@ -9,14 +9,14 @@ class GroupRole(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     role = db.Column(db.String) # "owner", "moderator", "member"
-    assigned_at = db.Column(db.Datetime, default=datetime.now(timezone.now))
+    assigned_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     # relations
     support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     
     # relationships
-    support_group = db.relationship('SupportGroup', back_populates='group_role', foreing_keys=[support_group_id])
+    support_group = db.relationship('SupportGroup', back_populates='group_role', foreign_keys=[support_group_id])
     users = db.relationship('User', back_populates='group_roles', foreign_keys=[user_id])
 
     serialize_rules = ('-support_group.support_group','-users.group_roles',)

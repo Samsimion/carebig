@@ -8,10 +8,10 @@ class Consent(db.Model, SerializerMixin):
     __tablename__ = 'consents'
 
     id = db.Column(db.Integer, primary_key= True)
-    scope = db.Column(db.Enum('medical_reports','progress','school_sharing','all'))
-    status = db.Column(db.Enum('in_process','granted','revoked'))
-    created_at =db.Column(db.Datetime, default=datetime.now(timezone.utc))
-    expiry_date = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    scope = db.Column(db.Enum('medical_reports','progress','school_sharing','all',name='consent_scope'))
+    status = db.Column(db.Enum('requested','granted','revoked', name='consent_status'))
+    created_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    expiry_date = db.Column(db.DateTime, nullable=True)
 
 
     #relations

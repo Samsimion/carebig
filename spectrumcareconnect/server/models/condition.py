@@ -12,16 +12,16 @@ class Condition(db.Model, SerializerMixin):
     
     code_icd = db.Column(db.String)
     description = db.Column(db.Text)
-    severity_level = db.Column(db.Enum('mild','moderate','severe'))
+    severity_level = db.Column(db.Enum('mild','moderate','severe',name='severity_level'))
     common_therapies= db.Column(db.Text)
-    is_active = db.COlumn(db.Boolean, default=False)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc) )
-    updated_at=db.Column(db.Datetime ,default=datetime.now(timezone.utc))
-    is_deleted= db.Column(db.boolean, default=False)
-    archived_at =db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    is_active = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc) )
+    updated_at=db.Column(db.DateTime ,default=lambda: datetime.now(timezone.utc))
+    is_deleted= db.Column(db.Boolean, default=False)
+    archived_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     #relation
-    category_id =db.Column(db.String, db.ForeignKey('condition_categories.id') ,nullable=False )
+    category_id =db.Column(db.Integer, db.ForeignKey('condition_categories.id') ,nullable=False )
 
     #relationships
     condition_category = db.relationship('ConditionCategory', back_populates='condition', foreign_keys= [category_id])

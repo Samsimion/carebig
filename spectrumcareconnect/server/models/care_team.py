@@ -7,18 +7,20 @@ class CareTeam(db.Model, SerializerMixin):
     __tablename__ = 'care_teams'
 
     id = db.Column(db.Integer, primary_key=True)
-    start_date = db.Column(db.Datetime, default=datetime.now(timezone.utc))
-    end_date = db.Column(db.Datetime)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
-    role = db.Column(db.Integer, db.Foreignkey('roles.id'))
+    start_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    end_date = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    
     
     # relations
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     # relationships
     child_profile = db.relationship('ChildProfile', back_populates='careteam', foreign_keys=[child_id])
     user = db.relationship('User', back_populates='careteam', foreign_keys=[user_id] )
+    role = db.relationship('ROle', back_populates='careteam', foreign_keys=[role_id])
+
 
     serialize_rules = ('-child_profile.careteam', '-user.careteam',)
 

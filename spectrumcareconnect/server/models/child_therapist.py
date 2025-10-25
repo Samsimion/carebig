@@ -7,22 +7,22 @@ class ChildTherapist(db.Model, SerializerMixin):
     __tablename__ = 'child_therapists'
 
     id = db.Column(db.Integer, primary_key=True)
-    relationship_type =db.Column(db.Enum('primary','secondary','temporary'))
-    start_date = db.Column(db.Datetime)
-    end_date = db.Column(db.Datetime)
-    created_at =db.Column(db.Datetime, default= datetime.now(timezone.utc))
+    relationship_type =db.Column(db.Enum('primary','secondary','temporary', name='relationship_type'))
+    start_date = db.Column(db.DateTime)
+    end_date = db.Column(db.DateTime)
+    created_at =db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean ,default=False)
-    archived_at = db.Column(db.Datetime ,default =datetime.now(timezone.utc))
+    archived_at = db.Column(db.DateTime ,default =lambda: datetime.now(timezone.utc))
 
     #relation
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id') ,nullable=False)
-    therapist_id =db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
+    therapist_id =db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'),nullable=False)
     
     #relationship
-    child_profiles = db.relationship('ChildProfile', back_populates='child_therapist', foreign_keys=[child_id])
+    child_profile = db.relationship('ChildProfile', back_populates='child_therapist', foreign_keys=[child_id])
     therapist_profile = db.relationship('TherapistProfile',back_populates='child_therapist', foreign_keys=[therapist_id])
 
-    serializer_rules = ('-child_profiles.child_therapist', '-therapist_profile.child_therapist',)
+    serialize_rules = ('-child_profile.child_therapist', '-therapist_profile.child_therapist',)
 
     def __repr__(self):
         return f"<ChildTherapist id={self.id} relationship_type={self.relationship_type} start_date={self.start_date} end_date={self.end_date} child_id={self.child_id} therapist_id={self.therapist_id}>"

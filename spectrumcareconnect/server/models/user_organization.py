@@ -7,8 +7,8 @@ class UserOrganization(db.Model, SerializerMixin):
     __tablename__ ='user_organizations'
 
     id = db.Column(db.Integer, primary_key=True)
-    role= db.Column(db.Enum('member','staff','admin'))
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    role= db.Column(db.Enum('member','staff','admin', name='user_role'))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     # relations

@@ -7,11 +7,11 @@ class Waitlist(db.Model, SerializerMixin):
     __tablename__ = 'waitlists'
 
     id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.Enum('waiting','notified','booked','cancelled'))
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    status = db.Column(db.Enum('waiting','notified','booked','cancelled', name='waitlist_status'))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     # relations
-    availability_slot_id = db.Column(db.Integer,db.ForeignKey('availability_slots.id'))
+    availability_slot_id = db.Column(db.Integer,db.ForeignKey('availability_slots.id'),nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('parent_profiles.id'))
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
     

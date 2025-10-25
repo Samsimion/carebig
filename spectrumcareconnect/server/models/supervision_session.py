@@ -9,7 +9,7 @@ class SupervisionSession(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     notes = db.Column(db.Text)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     # relations
     junior_therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))

@@ -1,4 +1,4 @@
-from extensions import db, bycrypt
+from extensions import db
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, timezone
@@ -9,7 +9,7 @@ class ParentProfile(db.Model, SerializerMixin):
     id= db.Column(db.Integer, primary_key=True, nullable=False)
     
     date_of_birth = db.Column(db.DateTime)
-    gender =db.Column(db.Enum('male', 'female', 'other', 'prefer_not_to_say'))
+    gender =db.Column(db.Enum('male', 'female', 'other', 'prefer_not_to_say', name='parent_profile_gender'))
     address_line = db.Column(db.String(130))
     address_line2= db.Column(db.String(130))
     city = db.Column(db.String(130))
@@ -20,10 +20,10 @@ class ParentProfile(db.Model, SerializerMixin):
     emergency_contact_phone = db.Column(db.String(20),nullable=False)
     occupation = db.Column(db.String(155))
     household_notes=db.Column(db.String())
-    created_at= db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    updated_at= db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    created_at= db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at= db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_deleted= db.Column(db.Boolean, default= False)
-    archived_at =db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    archived_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     #relations
@@ -37,7 +37,7 @@ class ParentProfile(db.Model, SerializerMixin):
     payment = db.relationship('Payment', back_populates='parent_profile', foreign_keys='Payment.parent_id', cascade='all, delete-orphan')
     waitlists = db.relationship('Waitlist', back_populates='parent_profile', foreign_keys='Waitlist.parent_id', cascade='all,  delete-orphan')
 
-    serialize_rules = ('-user.parent_prof', '-parent_child_links.parent_profiles','-reviews.parent_profile','-payment.parent_profile','-waitlists.parent_profile')
+    serialize_rules = ('-user.parent_prof', '-parent_child_links.parent_profiles','-reviews.parent_profile','-payment.parent_profile','-waitlists.parent_profile',)
 
     def __repr__(self):
         return f"<ParentProfile id={self.id} date_of_birth={self.date_of_birth} gender={self.gender} address_line={self.address_line} address_line2={self.address_line2} city={self.city} state_province={self.state_province} postal_code={self.postal_code} country={self.country} preferred_language={self.preferred_language} emergency_contact_phone={self.emergency_contact_phone} occupation={self.occupation} household_notes={self.household_notes} created_at={self.created_at} updated_at={self.updated_at} is_deleted={self.is_deleted} archived_at={self.archived_at} user_id={self.user_id}>"

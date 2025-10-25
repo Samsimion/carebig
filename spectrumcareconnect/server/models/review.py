@@ -6,11 +6,14 @@ from datetime import datetime, timezone
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
+    __table_args__ = (
+        db.CheckConstraint('rating >=1 AND rating <= 5', name='valid_rating_range'),
+    )
 
     id  = db.Column(db.Integer, primary_key= True)
-    rating = db.Column(db.Integer, max(5))
+    rating = db.Column(db.Integer)
     comment = db.Column(db.Text)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 

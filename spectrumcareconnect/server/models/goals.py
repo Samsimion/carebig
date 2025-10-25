@@ -9,12 +9,12 @@ class Goal(db.Model, SerializerMixin):
     
 
     id = db.Column(db.Integer, primary_key=True)
-    target_value = db.Column(db.Decimal)
+    target_value = db.Column(db.Numeric)
     unit = db.Column(db.String)
-    start_date = db.Column(db.Datetime)
-    due_date = db.Column(db.Datetime)
-    status = db.Column(db.Enum('active', 'achieved', 'missed', 'archived'))
-    created_at =db.Column(db.Datetime , default=datetime.now(timezone.utc))
+    start_date = db.Column(db.DateTime)
+    due_date = db.Column(db.DateTime)
+    status = db.Column(db.Enum('active', 'achieved', 'missed', 'archived', name='goal_status'))
+    created_at =db.Column(db.DateTime , default=lambda: datetime.now(timezone.utc))
 
 
     # relations

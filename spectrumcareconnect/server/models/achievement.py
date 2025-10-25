@@ -11,13 +11,13 @@ class Achievement( db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     badge_name = db.Column(db.String)
     description = db.Column(db.Text)
-    earned_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    earned_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     # relation
-    child_id =db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    goal_id = db.Column(db.Integer, db.ForeignKey('goals.id'))
+    child_id =db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False)
+    goal_id = db.Column(db.Integer, db.ForeignKey('goals.id'), nullable=False)
 
     # relationships
     child_profile = db.relationship('ChildProfile', back_populates='achievements', foreign_keys=[child_id])
@@ -26,4 +26,4 @@ class Achievement( db.Model, SerializerMixin):
     serialize_rules = ('-child_profile.achievements', '-goal.achievements',)
 
     def __repr__(self):
-        return f"<Achievement id={self.id} badge_name='{self.badge_name}' description='{self.description}' child_id={self.child_id} goal_id={self.goal_id},>"
+        return f"<Achievement id={self.id} badge_name='{self.badge_name}' description='{self.description}' child_id={self.child_id} goal_id={self.goal_id}>"

@@ -7,12 +7,12 @@ class Donation(db.Model, SerializerMixin):
     __tablename__ = 'donations'
 
     id = db.Column(db.Integer, primary_key=True)
-    amount_cents = db.Column(db.Integer)
-    currency_code = db.Column(db.String)
-    status = db.Column(db.Enum('pending','completed','failed'))
-    purpose = db.Column(db.Enum('general','child_support','therapy_fund','infrastructure','other'))
+    amount_cents = db.Column(db.Integer, nullable=False)
+    currency_code = db.Column(db.String, nullable=False)
+    status = db.Column(db.Enum('pending','completed','failed', name='donation_status'))
+    purpose = db.Column(db.Enum('general','child_support','therapy_fund','infrastructure','other', name='donation_purpose'))
 
-    created_at = db.Column(db.Datetime, datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc))
     
     # relations
     donor_id = db.Column(db.Integer, db.ForeignKey('donor_profiles.id'))
@@ -26,4 +26,4 @@ class Donation(db.Model, SerializerMixin):
     serialize_rules = ('-donors.donations','-organizations.donations',)
 
     def __repr__(self):
-        return f"<Donation id={self.id} amount_cents={self.amount_cents} currency_code={self.currency_code} status={self.status} purpose={self.purpose} donors_id={self.donor_id} organization_id={self.organization_id}>"
+        return f"<Donation id={self.id} amount_cents={self.amount_cents} currency_code={self.currency_code} status={self.status} purpose={self.purpose} donor_id={self.donor_id} organization_id={self.organization_id}>"

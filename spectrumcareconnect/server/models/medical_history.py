@@ -11,7 +11,7 @@ class MedicalHistory(db.Model, SerializerMixin):
     medications = db.Column(db.Text)
     past_surgeries = db.Column(db.Text)
     emergency_notes = db.Column(db.Text)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     
     # relations
@@ -24,7 +24,7 @@ class MedicalHistory(db.Model, SerializerMixin):
     child_profile = db.relationship('ChildProfile', back_populates='medical_history', foreign_keys=[child_id])
     condition = db.relationship('Condition', back_populates='medical_history', foreign_keys=[condition_id])
 
-    serialize_rules =('-updated_by_user.medical_history', '-child_profile.medical_history','condition.medical_history',)
+    serialize_rules =('-updated_by_user.medical_history', '-child_profile.medical_history','-condition.medical_history',)
 
     def __repr__(self):
         return f"<MedicalHistory id={self.id} allergies={self.allergies} medications={self.medications} past_surgeries={self.past_surgeries} emergency_notes={self.emergency_notes} created_at={self.created_at} updated_by_user_id={self.updated_by_user_id} child_id={self.child_id} condition_id={self.condition_id}>"

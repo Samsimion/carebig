@@ -9,16 +9,16 @@ class GroupEvent(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     description = db.Column(db.Text)
-    event_date = db.Column(db.Datetime)
+    event_date = db.Column(db.DateTime)
     location = db.Column(db.String)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # relations
     created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
 
     # relationships
-    created_by_user = db.relationship('User', back_populates='group_events', foreign_keys=[created_by_user_id], uselist=False)
+    created_by_user = db.relationship('User', back_populates='group_events', foreign_keys=[created_by_user_id])
     support_groups = db.relationship('SupportGroup', back_populates='group_events' ,foreign_keys=[support_group_id])
 
     serialize_rules = ('-created_by_user.group_events', '-support_groups.group_events',)

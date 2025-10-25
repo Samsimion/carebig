@@ -6,10 +6,13 @@ from datetime import datetime, timezone
 
 class TeacherProfile(db.Model,SerializerMixin):
     __tablename__='teacher_profiles'
+    __table_args__ = (
+        db.CheckConstraint('rating_avg <= 5', name='valid_avg_rating'),
+    )
 
     id = db.Column(db.Integer,primary_key=True)
     
-    date_of_birth = db.Column(db.Datetime)
+    date_of_birth = db.Column(db.DateTime)
     gender = db.Column(db.Enum('male', 'female','others', 'preffered_not_to_say'))
     address_line1 = db.Column(db.String(130))
     address_line2 =db.Column(db.String(130))
@@ -20,13 +23,13 @@ class TeacherProfile(db.Model,SerializerMixin):
     license_authority =db.Column(db.String(250))
     specialty_summary =db.Column(db.String())
     experience_years =db.Column(db.Integer)
-    rating_avg=db.Column(db.Integer, decimal(10,1), max(5))
-    verified =db.Columne(db.Boolean, default=False)
+    rating_avg=db.Column(db.Numeric(2,1), default=0)
+    verified =db.Column(db.Boolean, default=False)
     profile_photo_url= db.Column(db.String(130))
-    created_at =db.Column(db.DateTime, default= datetime.now(timezone.utc))
-    updated_at =db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at =db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc))
+    updated_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean, default=False) 
-    achieved_at =db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    achieved_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     #relations
     user_id =db.Column(db.Integer, db.ForeignKey('teacher_profiles.id'), nullable=False, unique=True)

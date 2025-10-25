@@ -6,11 +6,15 @@ from datetime import datetime, timezone
 
 class TherapistProfile(db.Model,SerializerMixin):
     __tablename__ = 'therapist_profiles'
+    __table_args__ =(
+        db.CheckConstraint('rating_avg<=5',name='valid_avg_rating' ),
+    )
+
 
     id= db.Column(db.Integer , primary_key=True)
     
     date_of_birth= db.Column(db.String)
-    gender =db.Column(db.Enum('male','female','other','prefer_not_to_say'))
+    gender =db.Column(db.Enum('male','female','other','prefer_not_to_say', name='therapist_gender'))
     address_line1=db.Column(db.String(150))
     address_line2 =db.Column(db.String(150))
     city =db.Column(db.String(150))
@@ -20,7 +24,7 @@ class TherapistProfile(db.Model,SerializerMixin):
     license_authority =db.Column(db.String)
     specialty_summary= db.Column(db.String)
     experience_years=db.Column(db.Integer)
-    rating_avg =db.Column(decimal(3, 2))
+    rating_avg =db.Column(db.Numeric(2,1), default=False)
     verified =db.Column(db.Boolean, default=False )
     profile_photo_url =db.String()
     created_at =db.Column(db.Enum('male','female','other','prefer_not_to_say'))
@@ -29,9 +33,9 @@ class TherapistProfile(db.Model,SerializerMixin):
     city =db.Column(db.String(150))
     state_province =db.Column(db.String(150))
     postal_code =db.Column(db.String(125))
-    updated_at =db.Column(db.DateTime ,default=datetime.now(timezone.utc))
+    updated_at =db.Column(db.DateTime ,default=lambda: datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean ,default=False)  
-    achieved_at =db.COlumn(db.DateTime ,default=datetime.now(timezone.utc))
+    achieved_at =db.Column(db.DateTime ,default=lambda: datetime.now(timezone.utc))
 
     #relations
     user_id =db.Column(db.Integer ,db.ForeignKey('users.id') ,nullable=False)

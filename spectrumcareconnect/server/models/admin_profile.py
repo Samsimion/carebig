@@ -10,12 +10,12 @@ class AdminProfile(db.Model, SerializerMixin):
     id =db.Column(db.Integer, primary_key=True)
     job_title = db.Column(db.String)          #System Admin, Data Manager
     department=  db.Column(db.String) #optional, e.g., IT, Support
-    permissions_level =db.Column(db.Enum('super_admin', 'manager', 'support') )# can refine later
+    permission_level =db.Column(db.Enum('super_admin', 'manager', 'support') )# can refine later
     notes = db.Column(db.String)
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    updated_at =db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_deleted = db.Column(db.Boolean, default=False) 
-    archived_at =db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    archived_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     #relations 

@@ -8,7 +8,7 @@ class GroupReport(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     reason = db.Column(db.Text)
     status = db.Column(db.String)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # relations
     support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))

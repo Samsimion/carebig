@@ -16,7 +16,7 @@ class GroupSetting(db.Model, SerializerMixin):
     # relationships
     support_group = db.relationship('SupportGroup', back_populates='group_setting', foreign_keys=[support_group_id])
 
-    serialize_rules= ('-support_group.group_setting')
+    serialize_rules= ('-support_group.group_setting',)
 
     def __repr__(self):
         return f"<GroupSetting id={self.id} is_private={self.is_private} approved_required={self.approved_required} support_group_id={self.support_group_id} >"

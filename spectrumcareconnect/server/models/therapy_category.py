@@ -10,13 +10,13 @@ class TherapyCategory(db.Model, SerializerMixin):
     id =db.Column(db.Integer, primary_key=True)
     name =db.Column(db.String(150))
     description= db.Column(db.Text)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
-    updated_at =db.Column(db.Datetime, default=datetime.now(timezone.utc)) 
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc)) 
 
     #relations
 
     #relationships
-    therapy_type = db.relationship('TherapyType', back_populates='therapy_category', foreign_keys='TherapyType.category_id', cascade='all, delete-orpham')
+    therapy_type = db.relationship('TherapyType', back_populates='therapy_category', foreign_keys='TherapyType.category_id', cascade='all, delete-orphan')
 
     serialize_rules =('-therapy_type.therapy_category',)
 

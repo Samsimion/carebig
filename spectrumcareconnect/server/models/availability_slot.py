@@ -7,20 +7,20 @@ class AvailabilitySlot(db.Model, SerializerMixin):
     __tablename__ ='availability_slots'
 
     id = db.Column(db.Integer, primary_key=True)
-    start_time = db.Column(db.Datetime)
-    end_time = db.Column(db.Datetime)
-    status = db.Column(db.Enum('open','booked', 'blocked'))
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime,nullable=False)
+    status = db.Column(db.Enum('open','booked', 'blocked', name='availability_slot_status'),nullable=False)
     location_type = db.Column(db.Enum('in_person', 'virtual', 'group'))
     meeting_link = db.Column(db.String) #Africa/Nairobi
-    created_at =db.Column(db.Datetime, default=datetime.now(timezone.utc))
-    updated_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # relations
     therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'), nullable=False)
 
 
     # relationship
-    therapist_profiles = db.relationship('TherapistProfile', back_populates='availaility_slots', foreign_keys=[therapist_id])
+    therapist_profiles = db.relationship('TherapistProfile', back_populates='availability_slots', foreign_keys=[therapist_id])
     sessions = db.relationship('Session', back_populates='availability_slots', foreign_keys='Session.availability_slot_id', cascade= 'all, delete-orphan')
     waitlists = db.relationship('Waitlist', back_populates='availability_slot', foreign_keys='Waitlist.availability_slot_id', cascade='all, delete-orphan')
 

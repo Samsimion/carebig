@@ -12,8 +12,8 @@ class DonorProfile(db.Model,SerializerMixin):
     total_donations = db.Column(db.Float, default=0.0)
     donations_count = db.Column(db.Integer, default=0)
     bio = db.Column(db.Text)
-    joined_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, onupdate=datetime.now(timezone.utc))
+    joined_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, onupdate=lambda: datetime.now(timezone.utc))
 
  
 
@@ -30,5 +30,5 @@ class DonorProfile(db.Model,SerializerMixin):
     
     serialize_rules = ('-users.donor_profile','-payments.donor','-donations.donors',)
 
-    def __rep__(self):
+    def __repr__(self):
         return f"<DonorProfile id={self.id} organization_name={self.organization_name} donation_focus_area='{self.donation_focus_area}' total_donations={self.total_donations} donations_count={self.donations_count} bio='{self.bio}' joined_at={self.joined_at} updated_at={self.updated_at} user_id={self.user_id}>"

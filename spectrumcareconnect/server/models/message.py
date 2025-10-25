@@ -9,8 +9,8 @@ class Message(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     content =db.Column(db.Text)
-    is_read =db.Column(db.Boolean)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    is_read =db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     #relations

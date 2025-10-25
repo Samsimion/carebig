@@ -12,12 +12,12 @@ class SessionNote(db.Model, SerializerMixin):
     recommendations = db.Column(db.Text)
     shared_with_parent= db.Column(db.Boolean, default=False)
     shared_with_school=db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
-    updated_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 
-    # relatioms
+    # relations
     session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
     therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
     child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))

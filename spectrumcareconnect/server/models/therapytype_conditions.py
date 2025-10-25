@@ -6,12 +6,12 @@ from datetime import datetime, timezone
 class TherapytypeCondition(db.Model, SerializerMixin):
     __tablename__ ='therapytype_conditions'
 
-    id= db.Column(db.Integer, nullable=False)
+    id= db.Column(db.Integer, primary_key=True)
     
 
-    effectiveness_level = db.Column(db.Enum('high','moderate','emerging','unknown'))
+    effectiveness_level = db.Column(db.Enum('high','moderate','emerging','unknown',name='effectiveness_level'))
     notes = db.Column(db.Text)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     #relations
@@ -22,7 +22,7 @@ class TherapytypeCondition(db.Model, SerializerMixin):
     therapy_type = db.relationship('TherapyType', back_populates='therapytype_condition', foreign_keys=[therapy_type_id])
     condition = db.relationship('Condition', back_populates='therapytype_condition', foreign_keys=[condition_id])
 
-    serialize_rules = ('therapy_type.therapytype_condition','condition.therapytype_condition',)
+    serialize_rules = ('-therapy_type.therapytype_condition','-condition.therapytype_condition',)
 
     def __repr__(self):
         return f"<TherapytypeCondition id={self.id} effectiveness_level={self.effectiveness_level} notes='{self.notes}' created_at={self.created_at} therapy_type_id={self.therapy_type_id} condition_id={self.condition_id}>"

@@ -8,17 +8,17 @@ class GroupComment(db.Model, SerializerMixin):
 
     id= db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
 
     # relations
     group_post_id = db.Column(db.Integer, db.ForeignKey('group_posts.id'))
-    user_id = db.Column(db.Integer, db.Foreigney('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     # relationships
     group_posts = db.relationship('GroupPost', back_populates='group_comments', foreign_keys=[group_post_id])
     users = db.relationship('User', back_populates='group_comments', foreign_keys=[user_id])
-    group_reports = db.relationship('GroupReport', back_populates='group_comment', foreign_keys='GroupReport.group_comment_id ', cascade='all, delete-orphan')
+    group_reports = db.relationship('GroupReport', back_populates='group_comment', foreign_keys='GroupReport.group_comment_id', cascade='all, delete-orphan')
 
     serialize_rules = ('-group_posts.group_comments','-users.group_comments','-group_reports.group_comment',)
 

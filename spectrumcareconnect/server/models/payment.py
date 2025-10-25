@@ -7,14 +7,14 @@ class Payment(db.Model, SerializerMixin):
     __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True)
-    amount_cents = db.Column(db.Integer)
-    currency_code = db.Column(db.String)
-    status = db.Column(db.Enum('pending','completed','failed','refunded'))
-    expiry_date = db.Column(db.Datetime)
-    Payment_method = db.Column(db.Enum('credit_card','paypal','bank_transfer','cash'))
+    amount_cents = db.Column(db.Integer, nullable=False)
+    currency_code = db.Column(db.String, nullable=False)
+    status = db.Column(db.Enum('pending','completed','failed','refunded',name='payment_status'), nullable=False)
+    expiry_date = db.Column(db.DateTime)
+    payment_method = db.Column(db.Enum('credit_card','paypal','bank_transfer','cash', name='payment_method'),nullable=False)
     transaction_reference = db.Column(db.String)
-    created_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
-    updated_at = db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     # relations
@@ -29,7 +29,7 @@ class Payment(db.Model, SerializerMixin):
     donor = db.relationship('DonorProfile', back_populates='payments', foreign_keys=[donor_id])
     organization = db.relationship('Organization', back_populates='payment', foreign_keys=[organization_id])
     
-    serialize_rules = ('-session.payment','-parent_profile.payment','-donor.payments','-organization.payment')
+    serialize_rules = ('-session.payment','-parent_profile.payment','-donor.payments','-organization.payment',)
 
     def __repr__(self):
-        return f"<Payment id={self.id} amount_cents={self.amount_cents} currency_code={self.currency_code} status={self.status} expiry_date={self.expiry_date} Payment_method={self.Payment_method} transaction_reference={self.transaction_reference} created_at={self.created_at} updated_at={self.updated_at} session_id={self.session_id} parent_id={self.parent_id} donor_id={self.donor_id} organization_id={self.organization_id} >"
+        return f"<Payment id={self.id} amount_cents={self.amount_cents} currency_code={self.currency_code} status={self.status} expiry_date={self.expiry_date} payment_method={self.payment_method} transaction_reference={self.transaction_reference} created_at={self.created_at} updated_at={self.updated_at} session_id={self.session_id} parent_id={self.parent_id} donor_id={self.donor_id} organization_id={self.organization_id} >"

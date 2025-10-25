@@ -14,15 +14,15 @@ class AuditLog(db.Model, SerializerMixin):
     new_values = db.Column(db.Text)
     ip_address = db.Column(db.String)
     device_info = db.Column(db.String)
-    created_at =db.Column(db.Datetime, default=datetime.now(timezone.utc))
+    created_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     # relations
-    user_id =db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id =db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     entity_id = db.Column(db.Integer,db.ForeignKey('users.id') )
 
     # relationships
-    user = db.relationship('User',back_populates='audit_log_user', foreign_keys=[user_id] )
+    user = db.relationship('User',back_populates='audit_log_user', foreign_keys=[user_id])
     entity_user = db.relationship('User', back_populates='audit_log_entity', foreign_keys=[entity_id])
 
     serialize_rules = ('-user.audit_log_user', '-entity_user.audit_log_entity',)
