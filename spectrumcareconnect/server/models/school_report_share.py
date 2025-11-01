@@ -8,10 +8,11 @@ class SchoolReportShare(db.Model, SerializerMixin):
 
     id =db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # relations
-    medical_report_id = db.Column(db.Integer, db.ForeignKey('medical_reports.id'),nullable=False)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('teacher_profiles.id'),nullable=False)
+    medical_report_id = db.Column(db.Integer, db.ForeignKey('medical_reports.id', name="fk_schoolreportshare_medicalreport_id"),nullable=False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teacher_profiles.id', name="fk_schoolreportshare_teacher_id"),nullable=False)
 
     # relationships
     medical_report = db.relationship('MedicalReport', back_populates='school_report_share', foreign_keys=[medical_report_id])

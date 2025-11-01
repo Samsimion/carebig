@@ -9,11 +9,11 @@ class GroupComment(db.Model, SerializerMixin):
     id= db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))    
 
     # relations
-    group_post_id = db.Column(db.Integer, db.ForeignKey('group_posts.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    group_post_id = db.Column(db.Integer, db.ForeignKey('group_posts.id', name="fk_groupcomment_grouppost_id"))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_groupcomment_user_id"))
 
     # relationships
     group_posts = db.relationship('GroupPost', back_populates='group_comments', foreign_keys=[group_post_id])

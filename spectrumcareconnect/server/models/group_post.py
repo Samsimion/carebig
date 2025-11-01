@@ -9,10 +9,11 @@ class GroupPost(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # relations
-    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id', name="fk_grouppost_supportgroup_id"))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_grouppost_user_id"))
 
     # relationships
     support_groups = db.relationship('SupportGroup', back_populates='group_posts', foreign_keys=[support_group_id])

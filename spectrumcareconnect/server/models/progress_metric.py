@@ -13,10 +13,11 @@ class ProgressMetric(db.Model, SerializerMixin):
     measurement_unit = db.Column(db.String)
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # relation
-    therapy_type_id = db.Column(db.Integer, db.ForeignKey('therapy_types.id'))
-    condition_id = db.Column(db.Integer, db.ForeignKey('conditions.id'))
+    therapy_type_id = db.Column(db.Integer, db.ForeignKey('therapy_types.id', name="fk_progressmetrics_therapytype_id"))
+    condition_id = db.Column(db.Integer, db.ForeignKey('conditions.id', name="fk_progressmetrics_condition_id"))
 
     # relationship
     therapy_type = db.relationship('TherapyType', back_populates='progress_metrics', foreign_keys=[therapy_type_id])

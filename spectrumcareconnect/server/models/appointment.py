@@ -13,10 +13,11 @@ class Appointment(db.Model, SerializerMixin):
     status = db.Column(db.Enum('scheduled','completed','cancelled', name='appointment_status'))
     notes =db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))    
-
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    
     #relations
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) #doctor/therapist/teacher
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id',name="fk_appointment_child_id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id',name="fk_appointment_user_id"), nullable=False) #doctor/therapist/teacher
     
     #relationship
     child_profiles = db.relationship('ChildProfile', back_populates='appointments', foreign_keys=[child_id])

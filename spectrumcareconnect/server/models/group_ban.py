@@ -12,9 +12,9 @@ class GroupBan(db.Model, SerializerMixin):
     
  
     # relations
-    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    banned_by_user_id= db.Column(db.Integer, db.ForeignKey('users.id'))
+    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id', name="fk_groupban_supportgroup_id"))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_groupban_user_id"))
+    banned_by_user_id= db.Column(db.Integer, db.ForeignKey('users.id', name="fk_groupban_bannedbyuser_id"))
 
     # relationships
     support_group = db.relationship('SupportGroup', back_populates='group_bans',foreign_keys=[support_group_id])

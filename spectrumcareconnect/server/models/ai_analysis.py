@@ -10,11 +10,12 @@ class AiAnalysis(db.Model, SerializerMixin):
     analysis_type = db.Column(db.Enum('progress_trend','risk_alert','recommendation', name='AI_analysis_type'))
     result_json = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     
     # relaions
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False)
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'), nullable=False)
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_aianalysis_child_id"), nullable=False)
+    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id', name="fk_aianalysis_session_id"), nullable=False)
     
     # relationships
     child_profile = db.relationship('ChildProfile', back_populates='AIanalysis', foreign_keys=[child_id])

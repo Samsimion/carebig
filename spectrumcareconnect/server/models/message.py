@@ -11,11 +11,12 @@ class Message(db.Model, SerializerMixin):
     content =db.Column(db.Text)
     is_read =db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     #relations
-    sender_id = db.Column(db.Integer , db.ForeignKey('users.id'), nullable=False)
-    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'),nullable=False)
+    sender_id = db.Column(db.Integer , db.ForeignKey('users.id', name="fk_message_sender_id"), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_message_recieve_id"),nullable=False)
     
     #relationships
     sender_user= db.relationship('User',back_populates='sender_message', foreign_keys=[sender_id])

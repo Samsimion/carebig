@@ -9,11 +9,12 @@ class UserOrganization(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     role= db.Column(db.Enum('member','staff','admin', name='user_role'))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     # relations
-    user_id= db.Column(db.Integer, db.ForeignKey('users.id'))
-    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'))
+    user_id= db.Column(db.Integer, db.ForeignKey('users.id', name="fk_userorg_user_id"))
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id',name="fk_userorg_organization_id"))
     
     # relationship
     users = db.relationship('User', back_populates='user_organization', foreign_keys=[user_id])

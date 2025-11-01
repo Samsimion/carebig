@@ -12,11 +12,12 @@ class MediaStorage(db.Model, SerializerMixin):
     description = db.Column(db.Text)
     is_sensitive = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # relations
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
-    uploaded_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_mediastorage_child_id"))
+    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id', name="fk_mediastorage_session_id"))
+    uploaded_by_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_mediastorage_uploadedby_id"))
 
     # relationships
     child_profile = db.relationship('ChildProfile', back_populates='media_storage', foreign_keys=[child_id] )

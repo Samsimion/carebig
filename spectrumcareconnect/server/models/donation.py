@@ -11,12 +11,12 @@ class Donation(db.Model, SerializerMixin):
     currency_code = db.Column(db.String, nullable=False)
     status = db.Column(db.Enum('pending','completed','failed', name='donation_status'))
     purpose = db.Column(db.Enum('general','child_support','therapy_fund','infrastructure','other', name='donation_purpose'))
-
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     created_at = db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc))
     
     # relations
-    donor_id = db.Column(db.Integer, db.ForeignKey('donor_profiles.id'))
-    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'))
+    donor_id = db.Column(db.Integer, db.ForeignKey('donor_profiles.id', name="fk_donation_donor_id"))
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id', name="fk_donation_organization_id"))
     
 
     # relationship

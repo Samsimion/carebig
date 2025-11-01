@@ -10,11 +10,11 @@ class ParentChildLink(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     parent_relationship = db.Column(db.Enum('mother','father','guardian','sibling','other', name='parent_relationship'))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     #relations
-    parent_id = db.Column(db.Integer, db.ForeignKey('parent_profiles.id'), nullable=False)
-    child_id= db.Column(db.Integer, db.ForeignKey('child_profiles.id') ,nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey('parent_profiles.id', name="fk_parentchildlink_parent_id"), nullable=False)
+    child_id= db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_parentchildlink_child_id") ,nullable=False)
     
     #relationships
     child_profiles = db.relationship('ChildProfile', back_populates='parent_child_links', foreign_keys=[child_id])

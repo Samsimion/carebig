@@ -1,0 +1,49 @@
+# """
+#         User Registration Endpoint
+#         ---
+#         tags:
+#           - Authentication
+#         description: Register a new user in SpectrumCareConnect
+#         consumes:
+#           - application/json
+#         parameters:
+#           - in: body
+#             name: body
+#             description: User registration data
+#             required: true
+#             schema:
+#               type: object
+#               properties:
+#                 first_name:
+#                   type: string
+#                   example: John
+#                 last_name:
+#                   type: string
+#                   example: Doe
+#                 middle_name:
+#                   type: string
+#                   example: M
+#                 email:
+#                   type: string
+#                   example: johndoe@example.com
+#                 password:
+#                   type: string
+#                   example: StrongPass123!
+#                 role_id:
+#                   type: integer
+#                   example: 1
+#         responses:
+#           201:
+#             description: User registered successfully
+#             schema:
+#               type: object
+#               properties:
+#                 message:
+#                   type: string
+#                   example: User registered successfully
+#                 user_id:
+#                   type: integer
+#                   example: 5
+#           400:
+#             description: Invalid input or duplicate email
+#         """

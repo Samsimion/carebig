@@ -16,10 +16,11 @@ class AdminProfile(db.Model, SerializerMixin):
     updated_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_deleted = db.Column(db.Boolean, default=False) 
     archived_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     #relations 
-    user_id =db.Column(db.Integer, db.ForeignKey('users.id') , nullable=False, unique=True) 
+    user_id =db.Column(db.Integer, db.ForeignKey('users.id', name="fk_adminprofile_user_id") , nullable=False, unique=True) 
 
 
 

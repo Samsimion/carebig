@@ -10,16 +10,16 @@ class CareTeam(db.Model, SerializerMixin):
     start_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     end_date = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # relations
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_careteam_child_id"))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_careteam_user_id"))
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id', name="fk_careteam_role_id"))
     # relationships
     child_profile = db.relationship('ChildProfile', back_populates='careteam', foreign_keys=[child_id])
     user = db.relationship('User', back_populates='careteam', foreign_keys=[user_id] )
-    role = db.relationship('ROle', back_populates='careteam', foreign_keys=[role_id])
+    role = db.relationship('Role', back_populates='careteam', foreign_keys=[role_id])
 
 
     serialize_rules = ('-child_profile.careteam', '-user.careteam',)

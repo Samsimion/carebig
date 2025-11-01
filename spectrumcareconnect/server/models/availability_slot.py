@@ -13,10 +13,10 @@ class AvailabilitySlot(db.Model, SerializerMixin):
     location_type = db.Column(db.Enum('in_person', 'virtual', 'group'))
     meeting_link = db.Column(db.String) #Africa/Nairobi
     created_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # relations
-    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'), nullable=False)
+    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id', name="fk_availabilityslot_therapist_id"), nullable=False)
 
 
     # relationship

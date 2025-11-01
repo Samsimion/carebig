@@ -14,7 +14,7 @@ class Role(db.Model,SerializerMixin):
     updated_at= db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean, default=False)
     archived_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
 
    
@@ -22,8 +22,8 @@ class Role(db.Model,SerializerMixin):
 
 
     # relationships
-    users = db.relationship('User', back_populates='role', foreign_keys='User.role_id')
-    careteam = db.relationship('CareTeam' ,back_populates='role', foreign_keys='CareTeam.role_id')
+    users = db.relationship('User', back_populates='role', foreign_keys='User.role_id', cascade='all, delete-orphan')
+    careteam = db.relationship('CareTeam' ,back_populates='role', foreign_keys='CareTeam.role_id', cascade='all, delete-orphan')
     serialize_rules =('-users.role','-careteam.role',)
 
     def __repr__(self):

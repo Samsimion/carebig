@@ -12,12 +12,13 @@ class MedicalHistory(db.Model, SerializerMixin):
     past_surgeries = db.Column(db.Text)
     emergency_notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     
     # relations
-    updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    condition_id = db.Column(db.Integer, db.ForeignKey('conditions.id'))
+    updated_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="medicalhistory_user_id"))
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="medicalhistory_child_id"))
+    condition_id = db.Column(db.Integer, db.ForeignKey('conditions.id', name="medicalhistory_condition_id"))
     
     # relationships
     updated_by_user = db.relationship('User', back_populates='medical_history', foreign_keys=[updated_by_user_id])

@@ -9,8 +9,8 @@ class GroupMember(db.Model, SerializerMixin):
     joined_at  = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # relations
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_groupmember_user_id"))
+    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id', name="fk_groupmember_supportgroup_id"))
     
     # relationships
 

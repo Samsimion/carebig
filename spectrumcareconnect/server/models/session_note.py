@@ -13,14 +13,13 @@ class SessionNote(db.Model, SerializerMixin):
     shared_with_parent= db.Column(db.Boolean, default=False)
     shared_with_school=db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     # relations
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
-    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
+    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id', name="fk_sessionnote_session_id"))
+    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id', name="fk_sessionnote_therapist_id"))
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_sessionnote_child_id"))
 
     # relationships
     session = db.relationship('Session', back_populates='session_notes', foreign_keys=[session_id])

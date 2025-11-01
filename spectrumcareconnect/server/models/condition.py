@@ -15,13 +15,13 @@ class Condition(db.Model, SerializerMixin):
     severity_level = db.Column(db.Enum('mild','moderate','severe',name='severity_level'))
     common_therapies= db.Column(db.Text)
     is_active = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc) )
-    updated_at=db.Column(db.DateTime ,default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_deleted= db.Column(db.Boolean, default=False)
     archived_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     #relation
-    category_id =db.Column(db.Integer, db.ForeignKey('condition_categories.id') ,nullable=False )
+    category_id =db.Column(db.Integer, db.ForeignKey('condition_categories.id', name="fk_condition_category_id") ,nullable=False )
 
     #relationships
     condition_category = db.relationship('ConditionCategory', back_populates='condition', foreign_keys= [category_id])

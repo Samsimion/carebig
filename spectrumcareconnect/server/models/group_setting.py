@@ -11,7 +11,7 @@ class GroupSetting(db.Model, SerializerMixin):
     approved_required = db.Column(db.Boolean, default=False)
 
     # relations
-    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
+    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id', name="fk_groupsetting_supportgroup_id"))
 
     # relationships
     support_group = db.relationship('SupportGroup', back_populates='group_setting', foreign_keys=[support_group_id])

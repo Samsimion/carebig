@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: 5f7f415de39b
+Revision ID: 9ec7081617a1
 Revises: 
-Create Date: 2025-10-25 11:19:13.522321
+Create Date: 2025-10-29 21:57:09.922719
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5f7f415de39b'
+revision = '9ec7081617a1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,6 +32,7 @@ def upgrade():
     sa.Column('types', sa.Enum('school', 'clinic', 'ngo', 'other', name='type_of_organization'), nullable=True),
     sa.Column('address', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('roles',
@@ -49,33 +50,8 @@ def upgrade():
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('teacher_profiles',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('date_of_birth', sa.DateTime(), nullable=True),
-    sa.Column('gender', sa.Enum('male', 'female', 'others', 'preffered_not_to_say'), nullable=True),
-    sa.Column('address_line1', sa.String(length=130), nullable=True),
-    sa.Column('address_line2', sa.String(length=130), nullable=True),
-    sa.Column('city', sa.String(), nullable=True),
-    sa.Column('state_province', sa.String(), nullable=True),
-    sa.Column('postal_code', sa.String(length=130), nullable=True),
-    sa.Column('country', sa.String(length=130), nullable=True),
-    sa.Column('license_authority', sa.String(length=250), nullable=True),
-    sa.Column('specialty_summary', sa.String(), nullable=True),
-    sa.Column('experience_years', sa.Integer(), nullable=True),
-    sa.Column('rating_avg', sa.Numeric(precision=2, scale=1), nullable=True),
-    sa.Column('verified', sa.Boolean(), nullable=True),
-    sa.Column('profile_photo_url', sa.String(length=130), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.Column('is_deleted', sa.Boolean(), nullable=True),
-    sa.Column('achieved_at', sa.DateTime(), nullable=True),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.CheckConstraint('rating_avg <= 5', name='valid_avg_rating'),
-    sa.ForeignKeyConstraint(['user_id'], ['teacher_profiles.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('user_id')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('therapy_categories',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -95,11 +71,11 @@ def upgrade():
     sa.Column('common_therapies', sa.Text(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.Column('archived_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('category_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['category_id'], ['condition_categories.id'], ),
+    sa.ForeignKeyConstraint(['category_id'], ['condition_categories.id'], name='fk_condition_category_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('group_settings',
@@ -107,7 +83,7 @@ def upgrade():
     sa.Column('is_private', sa.Boolean(), nullable=True),
     sa.Column('approved_required', sa.Boolean(), nullable=True),
     sa.Column('support_group_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], ),
+    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], name='fk_groupsetting_supportgroup_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('therapy_types',
@@ -121,7 +97,7 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('category_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['category_id'], ['therapy_categories.id'], ),
+    sa.ForeignKeyConstraint(['category_id'], ['therapy_categories.id'], name='fk_therapytype_category_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users',
@@ -138,10 +114,9 @@ def upgrade():
     sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.Column('achieved_at', sa.DateTime(), nullable=True),
     sa.Column('role_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
+    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], name='fk_user_role_id'),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('first_name')
+    sa.UniqueConstraint('email')
     )
     op.create_table('admin_profiles',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -154,7 +129,7 @@ def upgrade():
     sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.Column('archived_at', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_adminprofile_user_id'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id')
     )
@@ -167,10 +142,11 @@ def upgrade():
     sa.Column('ip_address', sa.String(), nullable=True),
     sa.Column('device_info', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('entity_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['entity_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['entity_id'], ['users.id'], name='fk_auditlog_entity_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_auditlog_user_iddd'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('child_profiles',
@@ -191,8 +167,8 @@ def upgrade():
     sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.Column('primary_diagnosis_id', sa.Integer(), nullable=False),
     sa.Column('organization_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
-    sa.ForeignKeyConstraint(['primary_diagnosis_id'], ['conditions.id'], ),
+    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name='fk_childprofile_organization_id'),
+    sa.ForeignKeyConstraint(['primary_diagnosis_id'], ['conditions.id'], name='fk_childprofile_primarydiagnosis_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('donor_profiles',
@@ -205,7 +181,7 @@ def upgrade():
     sa.Column('joined_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_donationprofile_user_id'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id')
     )
@@ -216,9 +192,9 @@ def upgrade():
     sa.Column('support_group_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('banned_by_user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['banned_by_user_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['banned_by_user_id'], ['users.id'], name='fk_groupban_bannedbyuser_id'),
+    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], name='fk_groupban_supportgroup_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_groupban_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('group_events',
@@ -228,10 +204,11 @@ def upgrade():
     sa.Column('event_date', sa.DateTime(), nullable=True),
     sa.Column('location', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('created_by_user_id', sa.Integer(), nullable=True),
     sa.Column('support_group_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_user_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], ),
+    sa.ForeignKeyConstraint(['created_by_user_id'], ['users.id'], name='fk_groupevent_createdbyuser_id'),
+    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], name='fk_groupevent_supportgroup_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('group_members',
@@ -239,28 +216,30 @@ def upgrade():
     sa.Column('joined_at', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('support_group_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], name='fk_groupmember_supportgroup_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_groupmember_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('group_posts',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('content', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('support_group_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], name='fk_grouppost_supportgroup_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_grouppost_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('group_roles',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('role', sa.String(), nullable=True),
     sa.Column('assigned_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('support_group_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], name='fk_grouprole_supportgroup_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_grouprole_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('messages',
@@ -268,10 +247,11 @@ def upgrade():
     sa.Column('content', sa.Text(), nullable=True),
     sa.Column('is_read', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('sender_id', sa.Integer(), nullable=False),
     sa.Column('receiver_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['receiver_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['sender_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['receiver_id'], ['users.id'], name='fk_message_recieve_id'),
+    sa.ForeignKeyConstraint(['sender_id'], ['users.id'], name='fk_message_sender_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('notifications',
@@ -285,7 +265,7 @@ def upgrade():
     sa.Column('link_url', sa.String(), nullable=True),
     sa.Column('related_entity_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_notification_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('parent_profiles',
@@ -307,7 +287,7 @@ def upgrade():
     sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.Column('archived_at', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_parentprofile_user_id'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id')
     )
@@ -318,10 +298,11 @@ def upgrade():
     sa.Column('measurement_unit', sa.String(), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('therapy_type_id', sa.Integer(), nullable=True),
     sa.Column('condition_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['condition_id'], ['conditions.id'], ),
-    sa.ForeignKeyConstraint(['therapy_type_id'], ['therapy_types.id'], ),
+    sa.ForeignKeyConstraint(['condition_id'], ['conditions.id'], name='fk_progressmetrics_condition_id'),
+    sa.ForeignKeyConstraint(['therapy_type_id'], ['therapy_types.id'], name='fk_progressmetrics_therapytype_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('resources',
@@ -333,9 +314,36 @@ def upgrade():
     sa.Column('is_public', sa.Boolean(), nullable=True),
     sa.Column('language_code', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('uploaded_by_user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['uploaded_by_user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['uploaded_by_user_id'], ['users.id'], name='fk_resource_uploadedbyuser_id'),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('teacher_profiles',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('date_of_birth', sa.DateTime(), nullable=True),
+    sa.Column('gender', sa.Enum('male', 'female', 'others', 'preffered_not_to_say'), nullable=True),
+    sa.Column('address_line1', sa.String(length=130), nullable=True),
+    sa.Column('address_line2', sa.String(length=130), nullable=True),
+    sa.Column('city', sa.String(), nullable=True),
+    sa.Column('state_province', sa.String(), nullable=True),
+    sa.Column('postal_code', sa.String(length=130), nullable=True),
+    sa.Column('country', sa.String(length=130), nullable=True),
+    sa.Column('license_authority', sa.String(length=250), nullable=True),
+    sa.Column('specialty_summary', sa.String(), nullable=True),
+    sa.Column('experience_years', sa.Integer(), nullable=True),
+    sa.Column('rating_avg', sa.Numeric(precision=2, scale=1), nullable=True),
+    sa.Column('verified', sa.Boolean(), nullable=True),
+    sa.Column('profile_photo_url', sa.String(length=130), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('is_deleted', sa.Boolean(), nullable=True),
+    sa.Column('achieved_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.CheckConstraint('rating_avg <= 5', name='valid_avg_rating'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_teacherprofile_user_id'),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('user_id')
     )
     op.create_table('therapist_profiles',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -358,7 +366,7 @@ def upgrade():
     sa.Column('achieved_at', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.CheckConstraint('rating_avg<=5', name='valid_avg_rating'),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_therapistprofile_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('therapytype_conditions',
@@ -366,20 +374,22 @@ def upgrade():
     sa.Column('effectiveness_level', sa.Enum('high', 'moderate', 'emerging', 'unknown', name='effectiveness_level'), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('therapy_type_id', sa.Integer(), nullable=False),
     sa.Column('condition_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['condition_id'], ['conditions.id'], ),
-    sa.ForeignKeyConstraint(['therapy_type_id'], ['therapy_types.id'], ),
+    sa.ForeignKeyConstraint(['condition_id'], ['conditions.id'], name='fk_therapytypecondition_condition_id'),
+    sa.ForeignKeyConstraint(['therapy_type_id'], ['therapy_types.id'], name='fk_therapytypecondition_therapy_type_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user_organizations',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('role', sa.Enum('member', 'staff', 'admin', name='user_role'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('organization_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name='fk_userorg_organization_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_userorg_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('volunteer_profiles',
@@ -391,7 +401,7 @@ def upgrade():
     sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.Column('achived_at', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_volunteerprofile_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('appointments',
@@ -401,10 +411,11 @@ def upgrade():
     sa.Column('status', sa.Enum('scheduled', 'completed', 'cancelled', name='appointment_status'), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_appointment_child_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_appointment_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('availability_slots',
@@ -417,7 +428,7 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('therapist_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], ),
+    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], name='fk_availabilityslot_therapist_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('care_teams',
@@ -425,12 +436,13 @@ def upgrade():
     sa.Column('start_date', sa.DateTime(), nullable=True),
     sa.Column('end_date', sa.DateTime(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('role_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_careteam_child_id'),
+    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], name='fk_careteam_role_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_careteam_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('child_therapists',
@@ -441,10 +453,11 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.Column('archived_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=False),
     sa.Column('therapist_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_childtherapist_child_id'),
+    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], name='fk_childtherapist_therapist_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('consents',
@@ -453,10 +466,11 @@ def upgrade():
     sa.Column('status', sa.Enum('requested', 'granted', 'revoked', name='consent_status'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('expiry_date', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=False),
     sa.Column('granted_to_user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['granted_to_user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_consent_child_id'),
+    sa.ForeignKeyConstraint(['granted_to_user_id'], ['users.id'], name='fk_consent_granted_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('donations',
@@ -465,11 +479,12 @@ def upgrade():
     sa.Column('currency_code', sa.String(), nullable=False),
     sa.Column('status', sa.Enum('pending', 'completed', 'failed', name='donation_status'), nullable=True),
     sa.Column('purpose', sa.Enum('general', 'child_support', 'therapy_fund', 'infrastructure', 'other', name='donation_purpose'), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('donor_id', sa.Integer(), nullable=True),
     sa.Column('organization_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['donor_id'], ['donor_profiles.id'], ),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
+    sa.ForeignKeyConstraint(['donor_id'], ['donor_profiles.id'], name='fk_donation_donor_id'),
+    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name='fk_donation_organization_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('goals',
@@ -480,22 +495,24 @@ def upgrade():
     sa.Column('due_date', sa.DateTime(), nullable=True),
     sa.Column('status', sa.Enum('active', 'achieved', 'missed', 'archived', name='goal_status'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=True),
     sa.Column('progress_metric_id', sa.Integer(), nullable=True),
     sa.Column('created_by_user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['created_by_user_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['progress_metric_id'], ['progress_metrics.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_goals_child_id'),
+    sa.ForeignKeyConstraint(['created_by_user_id'], ['users.id'], name='fk_goals_created_by_user_id'),
+    sa.ForeignKeyConstraint(['progress_metric_id'], ['progress_metrics.id'], name='fk_goals_progressmetric_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('group_comments',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('content', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('group_post_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['group_post_id'], ['group_posts.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['group_post_id'], ['group_posts.id'], name='fk_groupcomment_grouppost_id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_groupcomment_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('incident_reports',
@@ -507,8 +524,8 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=True),
     sa.Column('reported_by_user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['reported_by_user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_incidentreport_child_id'),
+    sa.ForeignKeyConstraint(['reported_by_user_id'], ['users.id'], name='fk_incidentreport_reportedbyuser_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('medical_histories',
@@ -518,12 +535,13 @@ def upgrade():
     sa.Column('past_surgeries', sa.Text(), nullable=True),
     sa.Column('emergency_notes', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('updated_by_user_id', sa.Integer(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=True),
     sa.Column('condition_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['condition_id'], ['conditions.id'], ),
-    sa.ForeignKeyConstraint(['updated_by_user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='medicalhistory_child_id'),
+    sa.ForeignKeyConstraint(['condition_id'], ['conditions.id'], name='medicalhistory_condition_id'),
+    sa.ForeignKeyConstraint(['updated_by_user_id'], ['users.id'], name='medicalhistory_user_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('medical_reports',
@@ -540,18 +558,19 @@ def upgrade():
     sa.Column('archived_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=True),
     sa.Column('uploaded_by_user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['uploaded_by_user_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_medicalreport_child_id'),
+    sa.ForeignKeyConstraint(['uploaded_by_user_id'], ['users.id'], name='fk_medicalreport_uploadedbyuser_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('parent_child_links',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('parent_relationship', sa.Enum('mother', 'father', 'guardian', 'sibling', 'other', name='parent_relationship'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('parent_id', sa.Integer(), nullable=False),
     sa.Column('child_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['parent_id'], ['parent_profiles.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_parentchildlink_child_id'),
+    sa.ForeignKeyConstraint(['parent_id'], ['parent_profiles.id'], name='fk_parentchildlink_parent_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('therapist_therapies',
@@ -560,10 +579,11 @@ def upgrade():
     sa.Column('experience_years', sa.Integer(), nullable=True),
     sa.Column('is_primary_speciality', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('therapist_id', sa.Integer(), nullable=False),
     sa.Column('therapy_type_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], ),
-    sa.ForeignKeyConstraint(['therapy_type_id'], ['therapy_types.id'], ),
+    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], name='fk_therapisttherapie_therapist_id'),
+    sa.ForeignKeyConstraint(['therapy_type_id'], ['therapy_types.id'], name='fk_therapisttherapie_therapy_type_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('volunteer_assignments',
@@ -572,14 +592,15 @@ def upgrade():
     sa.Column('start_date', sa.DateTime(), nullable=True),
     sa.Column('end_date', sa.DateTime(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.Column('achieved_at', sa.DateTime(), nullable=True),
     sa.Column('volunteer_id', sa.Integer(), nullable=False),
     sa.Column('child_id', sa.Integer(), nullable=True),
     sa.Column('organization_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
-    sa.ForeignKeyConstraint(['volunteer_id'], ['volunteer_profiles.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_volunteerassignment_child_id'),
+    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name='fk_volunteerassignment_organization_id'),
+    sa.ForeignKeyConstraint(['volunteer_id'], ['volunteer_profiles.id'], name='fk_volunteerassignment_volunteer_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('achievements',
@@ -588,10 +609,11 @@ def upgrade():
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('earned_at', sa.DateTime(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=False),
     sa.Column('goal_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['goal_id'], ['goals.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_achievement_child_id'),
+    sa.ForeignKeyConstraint(['goal_id'], ['goals.id'], name='fk_achievement_goal_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('group_reports',
@@ -599,23 +621,25 @@ def upgrade():
     sa.Column('reason', sa.Text(), nullable=True),
     sa.Column('status', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('support_group_id', sa.Integer(), nullable=True),
     sa.Column('reported_by_user_id', sa.Integer(), nullable=True),
     sa.Column('group_post_id', sa.Integer(), nullable=True),
     sa.Column('group_comment_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['group_comment_id'], ['group_comments.id'], ),
-    sa.ForeignKeyConstraint(['group_post_id'], ['group_posts.id'], ),
-    sa.ForeignKeyConstraint(['reported_by_user_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], ),
+    sa.ForeignKeyConstraint(['group_comment_id'], ['group_comments.id'], name='fk_groupreport_groupcomment_id'),
+    sa.ForeignKeyConstraint(['group_post_id'], ['group_posts.id'], name='fk_groupreport_grouppost_id'),
+    sa.ForeignKeyConstraint(['reported_by_user_id'], ['users.id'], name='fk_groupreport_reportedbyuser_id'),
+    sa.ForeignKeyConstraint(['support_group_id'], ['support_groups.id'], name='fk_groupreport_supportgroup_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('school_report_shares',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('medical_report_id', sa.Integer(), nullable=False),
     sa.Column('teacher_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['medical_report_id'], ['medical_reports.id'], ),
-    sa.ForeignKeyConstraint(['teacher_id'], ['teacher_profiles.id'], ),
+    sa.ForeignKeyConstraint(['medical_report_id'], ['medical_reports.id'], name='fk_schoolreportshare_medicalreport_id'),
+    sa.ForeignKeyConstraint(['teacher_id'], ['teacher_profiles.id'], name='fk_schoolreportshare_teacher_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('sessions',
@@ -632,24 +656,25 @@ def upgrade():
     sa.Column('condition_id', sa.Integer(), nullable=True),
     sa.Column('availability_slot_id', sa.Integer(), nullable=True),
     sa.Column('created_by_user_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['availability_slot_id'], ['availability_slots.id'], ),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['condition_id'], ['conditions.id'], ),
-    sa.ForeignKeyConstraint(['created_by_user_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], ),
-    sa.ForeignKeyConstraint(['therapy_type_id'], ['therapy_types.id'], ),
+    sa.ForeignKeyConstraint(['availability_slot_id'], ['availability_slots.id'], name='fk_session_availabilityslot_id'),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_session_child_id'),
+    sa.ForeignKeyConstraint(['condition_id'], ['conditions.id'], name='fk_session_condition_id'),
+    sa.ForeignKeyConstraint(['created_by_user_id'], ['users.id'], name='fk_session_createdbyuser_id'),
+    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], name='fk_session_therapist_id'),
+    sa.ForeignKeyConstraint(['therapy_type_id'], ['therapy_types.id'], name='fk_session_therapisttype_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('waitlists',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('status', sa.Enum('waiting', 'notified', 'booked', 'cancelled', name='waitlist_status'), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('availability_slot_id', sa.Integer(), nullable=False),
     sa.Column('parent_id', sa.Integer(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['availability_slot_id'], ['availability_slots.id'], ),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['parent_id'], ['parent_profiles.id'], ),
+    sa.ForeignKeyConstraint(['availability_slot_id'], ['availability_slots.id'], name='fk_waitlist_availability_slot_id'),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_waitlist_child_id'),
+    sa.ForeignKeyConstraint(['parent_id'], ['parent_profiles.id'], name='fk_waitlist_parent_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('ai_analyses',
@@ -657,10 +682,11 @@ def upgrade():
     sa.Column('analysis_type', sa.Enum('progress_trend', 'risk_alert', 'recommendation', name='AI_analysis_type'), nullable=True),
     sa.Column('result_json', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=False),
     sa.Column('session_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_aianalysis_child_id'),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], name='fk_aianalysis_session_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('media_storages',
@@ -670,12 +696,13 @@ def upgrade():
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('is_sensitive', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=True),
     sa.Column('session_id', sa.Integer(), nullable=True),
     sa.Column('uploaded_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ),
-    sa.ForeignKeyConstraint(['uploaded_by_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_mediastorage_child_id'),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], name='fk_mediastorage_session_id'),
+    sa.ForeignKeyConstraint(['uploaded_by_id'], ['users.id'], name='fk_mediastorage_uploadedby_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('payments',
@@ -692,10 +719,10 @@ def upgrade():
     sa.Column('parent_id', sa.Integer(), nullable=True),
     sa.Column('donor_id', sa.Integer(), nullable=True),
     sa.Column('organization_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['donor_id'], ['donor_profiles.id'], ),
-    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], ),
-    sa.ForeignKeyConstraint(['parent_id'], ['parent_profiles.id'], ),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ),
+    sa.ForeignKeyConstraint(['donor_id'], ['donor_profiles.id'], name='fk_payment_donor_id'),
+    sa.ForeignKeyConstraint(['organization_id'], ['organizations.id'], name='fk_payment_organization_id'),
+    sa.ForeignKeyConstraint(['parent_id'], ['parent_profiles.id'], name='fk_payment_parent_id'),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], name='fk_payment_session_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('progress_entries',
@@ -704,14 +731,15 @@ def upgrade():
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('recorded_at', sa.DateTime(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('recorded_by_user_id', sa.Integer(), nullable=False),
     sa.Column('child_id', sa.Integer(), nullable=False),
     sa.Column('progress_metric_id', sa.Integer(), nullable=True),
     sa.Column('session_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['progress_metric_id'], ['progress_metrics.id'], ),
-    sa.ForeignKeyConstraint(['recorded_by_user_id'], ['users.id'], ),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_progressentry_child_id'),
+    sa.ForeignKeyConstraint(['progress_metric_id'], ['progress_metrics.id'], name='fk_progressentry_progressmetric_id'),
+    sa.ForeignKeyConstraint(['recorded_by_user_id'], ['users.id'], name='fk_progressentry_recievedbyuser_id'),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], name='fk_progressentry_session_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('reviews',
@@ -719,11 +747,12 @@ def upgrade():
     sa.Column('rating', sa.Integer(), nullable=True),
     sa.Column('comment', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('session_id', sa.Integer(), nullable=True),
     sa.Column('parent_id', sa.Integer(), nullable=True),
     sa.CheckConstraint('rating >=1 AND rating <= 5', name='valid_rating_range'),
-    sa.ForeignKeyConstraint(['parent_id'], ['parent_profiles.id'], ),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ),
+    sa.ForeignKeyConstraint(['parent_id'], ['parent_profiles.id'], name='fk_review_parent_id'),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], name='fk_review_session_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('session_feedbacks',
@@ -731,10 +760,11 @@ def upgrade():
     sa.Column('self_reflection', sa.Text(), nullable=True),
     sa.Column('peer_review', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('session_id', sa.Integer(), nullable=True),
     sa.Column('therapist_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ),
-    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], ),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], name='fk_sessionfeedback_session_id'),
+    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], name='fk_sessionfeedback_therapist_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('session_notes',
@@ -749,21 +779,22 @@ def upgrade():
     sa.Column('session_id', sa.Integer(), nullable=True),
     sa.Column('therapist_id', sa.Integer(), nullable=True),
     sa.Column('child_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], ),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ),
-    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], ),
+    sa.ForeignKeyConstraint(['child_id'], ['child_profiles.id'], name='fk_sessionnote_child_id'),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], name='fk_sessionnote_session_id'),
+    sa.ForeignKeyConstraint(['therapist_id'], ['therapist_profiles.id'], name='fk_sessionnote_therapist_id'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('supervision_sessions',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('junior_therapist_id', sa.Integer(), nullable=True),
     sa.Column('senior_therapist_id', sa.Integer(), nullable=True),
     sa.Column('session_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['junior_therapist_id'], ['therapist_profiles.id'], ),
-    sa.ForeignKeyConstraint(['senior_therapist_id'], ['therapist_profiles.id'], ),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ),
+    sa.ForeignKeyConstraint(['junior_therapist_id'], ['therapist_profiles.id'], name='fk_supervisionsession_junior_therapist_id'),
+    sa.ForeignKeyConstraint(['senior_therapist_id'], ['therapist_profiles.id'], name='fk_supervisionsession_senior_therapist_id'),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], name='fk_supervisionsession_session_id'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
@@ -802,6 +833,7 @@ def downgrade():
     op.drop_table('user_organizations')
     op.drop_table('therapytype_conditions')
     op.drop_table('therapist_profiles')
+    op.drop_table('teacher_profiles')
     op.drop_table('resources')
     op.drop_table('progress_metrics')
     op.drop_table('parent_profiles')
@@ -821,7 +853,6 @@ def downgrade():
     op.drop_table('group_settings')
     op.drop_table('conditions')
     op.drop_table('therapy_categories')
-    op.drop_table('teacher_profiles')
     op.drop_table('support_groups')
     op.drop_table('roles')
     op.drop_table('organizations')

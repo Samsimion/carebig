@@ -12,10 +12,12 @@ class GroupEvent(db.Model, SerializerMixin):
     event_date = db.Column(db.DateTime)
     location = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # relations
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id'))
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_groupevent_createdbyuser_id"))
+    support_group_id = db.Column(db.Integer, db.ForeignKey('support_groups.id', name="fk_groupevent_supportgroup_id"))
+
 
     # relationships
     created_by_user = db.relationship('User', back_populates='group_events', foreign_keys=[created_by_user_id])

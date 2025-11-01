@@ -21,16 +21,15 @@ class ParentProfile(db.Model, SerializerMixin):
     occupation = db.Column(db.String(155))
     household_notes=db.Column(db.String())
     created_at= db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at= db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     is_deleted= db.Column(db.Boolean, default= False)
     archived_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     #relations
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'),nullable=False , unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_parentprofile_user_id"),nullable=False , unique=True)
 
     #relationships
-    
     user= db.relationship('User', back_populates= 'parent_prof', foreign_keys=[user_id])
     parent_child_links = db.relationship('ParentChildLink', back_populates='parent_profiles', foreign_keys='ParentChildLink.parent_id', cascade='all, delete-orphan')
     reviews = db.relationship('Review', back_populates='parent_profile', foreign_keys='Review.parent_id', cascade='all, delete-orphan')

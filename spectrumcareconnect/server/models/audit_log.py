@@ -15,11 +15,12 @@ class AuditLog(db.Model, SerializerMixin):
     ip_address = db.Column(db.String)
     device_info = db.Column(db.String)
     created_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     # relations
-    user_id =db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    entity_id = db.Column(db.Integer,db.ForeignKey('users.id') )
+    user_id =db.Column(db.Integer, db.ForeignKey('users.id', name="fk_auditlog_user_iddd"), nullable=False)
+    entity_id = db.Column(db.Integer,db.ForeignKey('users.id', name="fk_auditlog_entity_id") )
 
     # relationships
     user = db.relationship('User',back_populates='audit_log_user', foreign_keys=[user_id])

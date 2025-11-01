@@ -12,11 +12,11 @@ class TherapytypeCondition(db.Model, SerializerMixin):
     effectiveness_level = db.Column(db.Enum('high','moderate','emerging','unknown',name='effectiveness_level'))
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     #relations
-    therapy_type_id =db.Column(db.Integer, db.ForeignKey('therapy_types.id'), nullable=False)
-    condition_id =db.Column(db.Integer, db.ForeignKey('conditions.id'), nullable=False)
+    therapy_type_id =db.Column(db.Integer, db.ForeignKey('therapy_types.id', name="fk_therapytypecondition_therapy_type_id"), nullable=False)
+    condition_id =db.Column(db.Integer, db.ForeignKey('conditions.id', name="fk_therapytypecondition_condition_id"), nullable=False)
 
     #relationship
     therapy_type = db.relationship('TherapyType', back_populates='therapytype_condition', foreign_keys=[therapy_type_id])

@@ -33,12 +33,12 @@ class TherapistProfile(db.Model,SerializerMixin):
     city =db.Column(db.String(150))
     state_province =db.Column(db.String(150))
     postal_code =db.Column(db.String(125))
-    updated_at =db.Column(db.DateTime ,default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean ,default=False)  
     achieved_at =db.Column(db.DateTime ,default=lambda: datetime.now(timezone.utc))
 
     #relations
-    user_id =db.Column(db.Integer ,db.ForeignKey('users.id') ,nullable=False)
+    user_id =db.Column(db.Integer ,db.ForeignKey('users.id', name="fk_therapistprofile_user_id") ,nullable=False)
 
     #relationship
     user=db.relationship('User', back_populates='therapist_prof', foreign_keys=[user_id])
@@ -47,11 +47,11 @@ class TherapistProfile(db.Model,SerializerMixin):
     availability_slots= db.relationship('AvailabilitySlot', back_populates='therapist_profiles', foreign_keys= 'AvailabilitySlot.therapist_id', cascade='all, delete-orphan')
     sessions = db.relationship('Session', back_populates='therapist_profiles', foreign_keys='Session.therapist_id', cascade='all, delete-orphan')
     session_notes = db.relationship('SessionNote', back_populates='therapist_profile', foreign_keys='SessionNote.therapist_id', cascade='all, delete-orphan')
-    session_feedback = db.relationship('SessionFeedback', back_populates='therapist_profile', foreign_keys='SessionFeedback.therapist_id', cascade='all, delete-orphan')
+    sessionfeedback = db.relationship('SessionFeedback', back_populates='therapist_profile', foreign_keys='SessionFeedback.therapist_id', cascade='all, delete-orphan')
     supervision_session =db.relationship('SupervisionSession', back_populates='junior_therapist', foreign_keys='SupervisionSession.junior_therapist_id', cascade='all, delete-orphan')
-    senior_supervision_sessions= db.relationship('SupervisionSession', back_populates='senior_therapist', foreign_keys='SupervisionSession.senior_therapist_id', cascade='all, delete-orphan')
+    senior_supervision_session= db.relationship('SupervisionSession', back_populates='senior_therapist', foreign_keys='SupervisionSession.senior_therapist_id', cascade='all, delete-orphan')
 
-    serialize_rules = ('-user.therapist_prof', '-therapist_therapie.therapist_profile', '-child_therapist.therapist_profile', '-availability_slots.therapist_profiles', '-sessions.therapist_profiles', '-session_notes.therapist_profile', '-session_feedback.therapist_profile', '-supervision_session.junior_therapist', '-senior_supervision_sessions.senior_therapist',)
+    serialize_rules = ('-user.therapist_prof', '-therapist_therapie.therapist_profile', '-child_therapist.therapist_profile', '-availability_slots.therapist_profiles', '-sessions.therapist_profiles', '-session_notes.therapist_profile', '-sessionfeedback.therapist_profile', '-supervision_session.junior_therapist', '-senior_supervision_session.senior_therapist',)
 
     def __repr__(self):
         return f"<TherapistProfile id={self.id} date_of_birth={self.date_of_birth} gender={self.gender} address_line1='{self.address_line1}' address_line2='{self.address_line2}' city='{self.city}' state_province='{self.state_province}' postal_code='{self.postal_code}' country='{self.country}' license_authority='{self.license_authority}' specialty_summary='{self.specialty_summary}' experience_years={self.experience_years} rating_avg={self.rating_avg} verified={self.verified} profile_photo_url='{self.profile_photo_url}' created_at={self.created_at} address_line1='{self.address_line1}' address_line2='{self.address_line2}' city='{self.city}' state_province='{self.state_province}' postal_code='{self.postal_code}' updated_at={self.updated_at} is_deleted={self.is_deleted} achieved_at={self.achieved_at} user_id={self.user_id}>"

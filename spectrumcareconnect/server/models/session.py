@@ -12,16 +12,16 @@ class Session(db.Model, SerializerMixin):
     price_cents = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     achieved_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     # relations
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'),nullable=False)
-    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
-    therapy_type_id = db.Column(db.Integer, db.ForeignKey('therapy_types.id'))
-    condition_id = db.Column(db.Integer, db.ForeignKey('conditions.id'))
-    availability_slot_id = db.Column(db.Integer, db.ForeignKey('availability_slots.id'))
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_session_child_id"),nullable=False)
+    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id', name="fk_session_therapist_id"))
+    therapy_type_id = db.Column(db.Integer, db.ForeignKey('therapy_types.id', name="fk_session_therapisttype_id"))
+    condition_id = db.Column(db.Integer, db.ForeignKey('conditions.id', name="fk_session_condition_id"))
+    availability_slot_id = db.Column(db.Integer, db.ForeignKey('availability_slots.id', name="fk_session_availabilityslot_id"))
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_session_createdbyuser_id"))
     
     # relationship
     child_profiles= db.relationship('ChildProfile', back_populates='sessions', foreign_keys=[child_id])

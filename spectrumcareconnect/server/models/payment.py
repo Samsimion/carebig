@@ -14,14 +14,14 @@ class Payment(db.Model, SerializerMixin):
     payment_method = db.Column(db.Enum('credit_card','paypal','bank_transfer','cash', name='payment_method'),nullable=False)
     transaction_reference = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     # relations
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
-    parent_id = db.Column(db.Integer, db.ForeignKey('parent_profiles.id'))
-    donor_id = db.Column(db.Integer, db.ForeignKey('donor_profiles.id'))
-    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id'))
+    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id', name="fk_payment_session_id"))
+    parent_id = db.Column(db.Integer, db.ForeignKey('parent_profiles.id', name="fk_payment_parent_id"))
+    donor_id = db.Column(db.Integer, db.ForeignKey('donor_profiles.id', name="fk_payment_donor_id"))
+    organization_id = db.Column(db.Integer, db.ForeignKey('organizations.id', name="fk_payment_organization_id"))
 
     # relationships
     session = db.relationship('Session', back_populates='payment', foreign_keys=[session_id] )

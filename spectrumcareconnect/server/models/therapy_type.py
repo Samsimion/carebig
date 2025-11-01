@@ -14,10 +14,10 @@ class TherapyType(db.Model, SerializerMixin):
     delivery_modes= db.Column(db.Text)
     is_active= db.Column(db.Boolean, default=False)
     created_at= db.Column(db.DateTime, default=lambda:  datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime,default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     #relations
-    category_id = db.Column(db.Integer, db.ForeignKey('therapy_categories.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('therapy_categories.id', name="fk_therapytype_category_id"))
 
     #relationship
     therapy_category = db.relationship('TherapyCategory', back_populates= 'therapy_type', foreign_keys= [category_id])

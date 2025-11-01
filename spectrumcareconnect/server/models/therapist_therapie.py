@@ -13,10 +13,11 @@ class TherapistTherapies(db.Model, SerializerMixin):
     experience_years = db.Column(db.Integer)
     is_primary_speciality = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     #relations
-    therapist_id =db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'), nullable=False)
-    therapy_type_id = db.Column(db.Integer, db.ForeignKey('therapy_types.id'), nullable=False)
+    therapist_id =db.Column(db.Integer, db.ForeignKey('therapist_profiles.id', name="fk_therapisttherapie_therapist_id"), nullable=False)
+    therapy_type_id = db.Column(db.Integer, db.ForeignKey('therapy_types.id', name="fk_therapisttherapie_therapy_type_id"), nullable=False)
 
     #relationship
     therapist_profile = db.relationship('TherapistProfile', back_populates='therapist_therapie', foreign_keys=[therapist_id])

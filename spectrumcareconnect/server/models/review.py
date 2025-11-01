@@ -14,12 +14,12 @@ class Review(db.Model, SerializerMixin):
     rating = db.Column(db.Integer)
     comment = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     # relations
-    session_id= db.Column(db.Integer, db.ForeignKey('sessions.id'))
-    parent_id= db.Column(db.Integer, db.ForeignKey('parent_profiles.id'))
+    session_id= db.Column(db.Integer, db.ForeignKey('sessions.id', name="fk_review_session_id"))
+    parent_id= db.Column(db.Integer, db.ForeignKey('parent_profiles.id', name="fk_review_parent_id"))
 
     # relationship
     session = db.relationship('Session', back_populates='reviews',foreign_keys= [session_id] )

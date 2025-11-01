@@ -13,10 +13,11 @@ class ChildTherapist(db.Model, SerializerMixin):
     created_at =db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean ,default=False)
     archived_at = db.Column(db.DateTime ,default =lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     #relation
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id') ,nullable=False)
-    therapist_id =db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'),nullable=False)
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_childtherapist_child_id") ,nullable=False)
+    therapist_id =db.Column(db.Integer, db.ForeignKey('therapist_profiles.id', name="fk_childtherapist_therapist_id"),nullable=False)
     
     #relationship
     child_profile = db.relationship('ChildProfile', back_populates='child_therapist', foreign_keys=[child_id])

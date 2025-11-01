@@ -2,20 +2,22 @@ from extensions import db, bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime, timezone
+from sqlalchemy.orm import validates
+import re
 
 class User(db.Model,SerializerMixin):
     __tablename__= 'users'
     
 
     id=db.Column(db.Integer, primary_key=True)
-    first_name=db.Column(db.String(120), unique=True,nullable=False)
+    first_name=db.Column(db.String(120),nullable=False)
     last_name = db.Column(db.String(120),nullable=False)
     middle_name =db.Column(db.String(120))
     email= db.Column(db.String(120), unique=True,nullable=False)
     _password_hash= db.Column(db.String(255), nullable=False)
-    status = db.Column(db.Enum('active','inactive','suspended', name='user_status'),nullable=False)
+    status = db.Column(db.Enum('active','inactive','suspended', name='user_status'),nullable=False,default='inactive')
     created_at= db.Column(db.DateTime,default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     last_login_at= db.Column(db.DateTime,default=lambda: datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean, default=False)
     achieved_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -26,13 +28,13 @@ class User(db.Model,SerializerMixin):
 
 
     # relations
-    role_id= db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
+    role_id= db.Column(db.Integer, db.ForeignKey('roles.id', name="fk_user_role_id"), nullable=False)
     
 
 
     # relationships
     role = db.relationship('Role', back_populates= 'users',foreign_keys=[role_id])
-    donor_profile = db.relationship('DonorProfile', back_populates='user', foreign_keys='DonorProfile.user_id', uselist=False, cascade='all, delete-orphan')
+    donor_profile = db.relationship('DonorProfile', back_populates='users', foreign_keys='DonorProfile.user_id', uselist=False, cascade='all, delete-orphan')
     parent_prof =db.relationship('ParentProfile', back_populates='user',foreign_keys= 'ParentProfile.user_id',uselist=False, cascade='all, delete-orphan')
     admin_prof= db.relationship('AdminProfile', back_populates= 'user', foreign_keys= 'AdminProfile.user_id', uselist=False, cascade='all, delete-orphan')
     teacher_prof = db.relationship('TeacherProfile', back_populates='user', foreign_keys='TeacherProfile.user_id',uselist=False, cascade='all, delete-orphan')
@@ -58,13 +60,14 @@ class User(db.Model,SerializerMixin):
     group_report = db.relationship('GroupReport', back_populates='reported_by_user', foreign_keys='GroupReport.reported_by_user_id', cascade='all, delete-orphan')
     group_ban = db.relationship('GroupBan', back_populates='user', foreign_keys='GroupBan.user_id', cascade='all, delete-orphan')
     groupban_by = db.relationship('GroupBan', back_populates='banned_by_user', foreign_keys='GroupBan.banned_by_user_id', cascade='all, delete-orphan')
+    group_events = db.relationship('GroupEvent', back_populates='created_by_user', foreign_keys='GroupEvent.created_by_user_id', cascade='all, delete-orphan')
     incident_report = db.relationship('IncidentReport', back_populates='reported_by', foreign_keys='IncidentReport.reported_by_user_id', cascade='all, delete-orphan')
     media_storage = db.relationship('MediaStorage', back_populates='uploaded_by', foreign_keys='MediaStorage.uploaded_by_id', cascade='all, delete-orphan')
     careteam = db.relationship('CareTeam', back_populates='user', foreign_keys='CareTeam.user_id', cascade='all, delete-orphan')
     group_roles = db.relationship('GroupRole', back_populates='users', foreign_keys='GroupRole.user_id', cascade='all, delete-orphan')
     progress_entry=db.relationship('ProgressEntry', back_populates='users', foreign_keys='ProgressEntry.recorded_by_user_id', cascade='all, delete-orphan')
 
-    serialize_rules=('-role.users', '-donor_profile.user','-parent_prof.user','-admin_prof.user','-teacher_prof.user','-therapist_prof.user','-volunteer_prof.user','-appointments.users', '-sender_message.sender_user', '-receiver_message.receiver_user','-consent.user', '-sessions.created_user','-goals.created_by_user','-medical_reports.uploaded_by_user','-medical_history.updated_by_user','-audit_log_user.user','-audit_log_entity.entity_user','-notifications.user','-resources.uploaded_by_user','-user_organization.users','-group_members.users','-group_posts.users','-group_comments.users','-group_report.reported_by_user','-group_ban.user','-groupban_by.banned_by_user','-incident_report.reported_by','-media_storage.uploaded_by','-careteam.user','-group_roles.users',)
+    serialize_rules=('-role.users', '-donor_profile.users','-parent_prof.user','-admin_prof.user','-teacher_prof.user','-therapist_prof.user','-volunteer_prof.user','-appointments.users', '-sender_message.sender_user', '-receiver_message.receiver_user','-consent.user', '-sessions.created_user','-goals.created_by_user','-medical_reports.uploaded_by_user','-medical_history.updated_by_user','-audit_log_user.user','-audit_log_entity.entity_user','-notifications.user','-resources.uploaded_by_user','-user_organization.users','-group_members.users','-group_posts.users','-group_comments.users','-group_report.reported_by_user','-group_ban.user','-groupban_by.banned_by_user','-incident_report.reported_by','-media_storage.uploaded_by','-careteam.user','-group_roles.users','-group_events.created_by_user',)
     
 
     #password handling property
@@ -74,6 +77,7 @@ class User(db.Model,SerializerMixin):
         return self._password_hash
     
 
+
     @password.setter
     def password(self, plain_password):
         self._password_hash =bcrypt.generate_password_hash(plain_password).decode('utf-8')
@@ -81,7 +85,14 @@ class User(db.Model,SerializerMixin):
 
     def check_password(self, plain_password):
         return bcrypt.check_password_hash(self._password_hash, plain_password)
-    
+
+    @validates('email')
+    def validate_email(self,key,email):
+        email = email.lower()
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            raise ValueError('invalid email format')
+        return email
+
     def __repr__(self):
         return f"<User id={self.id} first_name='{self.first_name}'last_name='{self.last_name}' middle_name='{self.middle_name}' email='{self.email}' _password_hash='{self._password_hash}' status={self.status} created_at={self.created_at} updated_at={self.updated_at} last_login_at={self.last_login_at} is_deleted={self.is_deleted} achieved_at={self.achieved_at} role_id={self.role_id}>"
     

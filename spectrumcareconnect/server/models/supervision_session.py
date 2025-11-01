@@ -10,11 +10,12 @@ class SupervisionSession(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     notes = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
     # relations
-    junior_therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
-    senior_therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
+    junior_therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id', name="fk_supervisionsession_junior_therapist_id"))
+    senior_therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id', name="fk_supervisionsession_senior_therapist_id"))
+    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id', name="fk_supervisionsession_session_id"))
 
     # relationships
     junior_therapist = db.relationship('TherapistProfile', back_populates='supervision_session', foreign_keys=[junior_therapist_id])

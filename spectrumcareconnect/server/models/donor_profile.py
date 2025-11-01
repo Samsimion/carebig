@@ -13,15 +13,15 @@ class DonorProfile(db.Model,SerializerMixin):
     donations_count = db.Column(db.Integer, default=0)
     bio = db.Column(db.Text)
     joined_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, onupdate=lambda: datetime.now(timezone.utc))
-
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    
  
 
 
 
 
     # relations
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_donationprofile_user_id"), nullable=False, unique=True)
 
     # relationship
     users = db.relationship('User', back_populates='donor_profile', foreign_keys=[user_id])

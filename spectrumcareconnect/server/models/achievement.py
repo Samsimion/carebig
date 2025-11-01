@@ -13,11 +13,12 @@ class Achievement( db.Model, SerializerMixin):
     description = db.Column(db.Text)
     earned_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     # relation
-    child_id =db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False)
-    goal_id = db.Column(db.Integer, db.ForeignKey('goals.id'), nullable=False)
+    child_id =db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_achievement_child_id"), nullable=False)
+    goal_id = db.Column(db.Integer, db.ForeignKey('goals.id', name="fk_achievement_goal_id"), nullable=False)
 
     # relationships
     child_profile = db.relationship('ChildProfile', back_populates='achievements', foreign_keys=[child_id])

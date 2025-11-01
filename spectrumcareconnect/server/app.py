@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api,Resource
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
+from flasgger import Swagger
 
 from config import Config
 from marshmallow import ValidationError
@@ -26,6 +27,15 @@ jwt.init_app(app)
 bcrypt.init_app(app)
 cors.init_app(app, resources={ r"/api/spectrumcareconnect/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 api=Api(app)
+swagger=Swagger(app)
 
 from models import *
 migrate = Migrate(app,db)
+
+#routes
+from routes.auth_routes import Registration,Login
+
+
+# api endpoint
+api.add_resource(Registration, '/api/registration', endpoint='registration')
+api.add_resource(Login, '/api/login', endpoint="login")

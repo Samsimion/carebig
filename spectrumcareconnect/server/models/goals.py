@@ -15,12 +15,13 @@ class Goal(db.Model, SerializerMixin):
     due_date = db.Column(db.DateTime)
     status = db.Column(db.Enum('active', 'achieved', 'missed', 'archived', name='goal_status'))
     created_at =db.Column(db.DateTime , default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     # relations
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    progress_metric_id = db.Column(db.Integer, db.ForeignKey('progress_metrics.id'))
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_goals_child_id"))
+    progress_metric_id = db.Column(db.Integer, db.ForeignKey('progress_metrics.id', name="fk_goals_progressmetric_id"))
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_goals_created_by_user_id"))
 
 
     # relationships

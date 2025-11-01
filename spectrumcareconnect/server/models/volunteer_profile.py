@@ -13,14 +13,14 @@ class VolunteerProfile(db.Model, SerializerMixin):
     skills = db.Column(db.String)
     availability =db.Column(db.String)
     created_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     is_deleted =db.Column(db.Boolean, default=False)
     achived_at= db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
 
     #relations
-    user_id= db.Column(db.Integer,db.ForeignKey('users.id'))
+    user_id= db.Column(db.Integer,db.ForeignKey('users.id', name="fk_volunteerprofile_user_id"))
 
 
     #relationships

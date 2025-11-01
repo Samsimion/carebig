@@ -12,11 +12,12 @@ class Consent(db.Model, SerializerMixin):
     status = db.Column(db.Enum('requested','granted','revoked', name='consent_status'))
     created_at =db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     expiry_date = db.Column(db.DateTime, nullable=True)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
     #relations
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False )
-    granted_to_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_consent_child_id"), nullable=False )
+    granted_to_user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_consent_granted_user_id"), nullable=False)
     
     #relationship
     child_profile = db.relationship('ChildProfile', back_populates='consent', foreign_keys=[child_id])

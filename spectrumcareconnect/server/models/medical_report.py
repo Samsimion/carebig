@@ -17,12 +17,13 @@ class MedicalReport(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, default= lambda: datetime.now(timezone.utc))
     is_deleted = db.Column(db.Boolean, default=False)
     archived_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
 
     # relations
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    uploaded_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_medicalreport_child_id"))
+    uploaded_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_medicalreport_uploadedbyuser_id"))
 
     # relationships
     child_profile = db.relationship('ChildProfile', back_populates='medical_reports', foreign_keys=[child_id])

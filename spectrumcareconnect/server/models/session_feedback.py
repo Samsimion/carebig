@@ -10,10 +10,10 @@ class SessionFeedback(db.Model, SerializerMixin):
     self_reflection =db.Column(db.Text)
     peer_review = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     # relations
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
-    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id'))
+    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id',name="fk_sessionfeedback_session_id"))
+    therapist_id = db.Column(db.Integer, db.ForeignKey('therapist_profiles.id',name="fk_sessionfeedback_therapist_id"))
     
     # relationship
     session = db.relationship('Session', back_populates='session_feedback', foreign_keys=[session_id])

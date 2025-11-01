@@ -16,8 +16,8 @@ class IncidentReport(db.Model, SerializerMixin):
     
 
     # relations
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    reported_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_incidentreport_child_id"))
+    reported_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_incidentreport_reportedbyuser_id"))
     
     # relationship
     child_profile = db.relationship('ChildProfile',back_populates='incident_report', foreign_keys=[child_id])

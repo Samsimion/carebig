@@ -12,14 +12,15 @@ class VolunteerAssignment(db.Model, SerializerMixin):
     start_date = db.Column(db.DateTime)
     end_date=db.Column(db.DateTime)
     created_at= db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     is_deleted= db.Column(db.Boolean, default=False)
     achieved_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 
     #relations
-    volunteer_id = db.Column(db.Integer, db.ForeignKey('volunteer_profiles.id'), nullable=False)
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'))
-    organization_id= db.Column(db.Integer, db.ForeignKey('organizations.id'))
+    volunteer_id = db.Column(db.Integer, db.ForeignKey('volunteer_profiles.id', name="fk_volunteerassignment_volunteer_id"), nullable=False)
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_volunteerassignment_child_id"))
+    organization_id= db.Column(db.Integer, db.ForeignKey('organizations.id', name="fk_volunteerassignment_organization_id"))
 
 
     #relationship

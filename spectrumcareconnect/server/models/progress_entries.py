@@ -13,15 +13,15 @@ class ProgressEntry(db.Model,SerializerMixin):
     
     recorded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
 
     # relations
-    recorded_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id'), nullable=False)
-    progress_metric_id = db.Column(db.Integer, db.ForeignKey('progress_metrics.id'))
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
+    recorded_by_user_id = db.Column(db.Integer, db.ForeignKey('users.id', name="fk_progressentry_recievedbyuser_id"), nullable=False)
+    child_id = db.Column(db.Integer, db.ForeignKey('child_profiles.id', name="fk_progressentry_child_id"), nullable=False)
+    progress_metric_id = db.Column(db.Integer, db.ForeignKey('progress_metrics.id', name="fk_progressentry_progressmetric_id"))
+    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id', name="fk_progressentry_session_id"))
     
     # relationship
     users = db.relationship('User', back_populates='progress_entry', foreign_keys=[recorded_by_user_id])
